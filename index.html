@@ -151,7 +151,7 @@ a{color:var(--pine)}
 .durbtn.gelmedi.on{background:var(--danger);color:#fff;border-color:var(--danger)}
 
 /* modal */
-.modal-bg{position:fixed;inset:0;z-index:9500;background:rgba(10,30,30,.55);backdrop-filter:blur(4px);display:flex;align-items:flex-end;justify-content:center;padding:0;animation:fade .2s}
+.modal-bg{position:fixed;inset:0;z-index:9500;background:rgba(8,24,24,.78);backdrop-filter:blur(6px);display:flex;align-items:flex-end;justify-content:center;padding:0;animation:fade .2s}
 @media(min-width:640px){.modal-bg{align-items:center;padding:20px}}
 .modal{background:var(--bg);width:100%;max-width:620px;max-height:92vh;overflow-y:auto;border-radius:22px 22px 0 0;box-shadow:var(--shadow-lg);animation:slideup .28s cubic-bezier(.2,.9,.3,1)}
 @media(min-width:640px){.modal{border-radius:22px}}
@@ -213,6 +213,8 @@ details p,details ul{margin:0 0 12px}
 .switch::after{content:"";position:absolute;width:20px;height:20px;border-radius:50%;background:#fff;top:3px;left:3px;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
 .switch.on::after{left:23px}
 
+.uw{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 14px;font-size:.86rem}
+.uw>span{flex:1}
 .hidden{display:none!important}
 .progress-top{position:fixed;top:0;left:0;height:3px;background:var(--amber);z-index:100;transition:width .1s;width:0}
 </style>
@@ -279,6 +281,8 @@ function toast(msg, tip='') {
    DEPO (localStorage) — her şey cihazda yerel (KVKK)
    ============================================================ */
 const DB_KEY = 'reha_planla_v1';
+const DEMO_KEY = 'reha_planla_demo';
+function curKey(){ return (typeof demoAktif==='function' && demoAktif()) ? DEMO_KEY : DB_KEY; }
 const defaultSettings = () => ({
   kurumAdi: '', personel: '', il: '', ilce: '',
   baslangic: '09:00', dersDk: 40, molaDk: 10, gunlukSlot: 8, beklemeDk: 50,
@@ -295,7 +299,7 @@ let DB = { students: [], uzmanlar: [], plans: {}, randevular: [], settings: defa
 
 function load() {
   try {
-    const raw = localStorage.getItem(DB_KEY);
+    const raw = localStorage.getItem(curKey());
     if (raw) {
       const p = JSON.parse(raw);
       DB.students = p.students || [];
@@ -312,7 +316,7 @@ let saveT;
 function save() {
   clearTimeout(saveT);
   saveT = setTimeout(() => {
-    try { localStorage.setItem(DB_KEY, JSON.stringify(DB)); }
+    try { localStorage.setItem(curKey(), JSON.stringify(DB)); }
     catch(e){ toast('Kayıt alanı doldu olabilir. Fotoğrafları küçültün veya yedek alıp temizleyin.', 'err'); }
   }, 120);
 }
@@ -399,36 +403,14 @@ function viewPanel(){
 
   const veliBekle = aktifOgr().filter(s=> (s.program&&s.program.length) && (s.veliOnay||'beklemede')!=='onaylandi').length;
   const veliOnayli = aktifOgr().filter(s=> (s.program&&s.program.length) && s.veliOnay==='onaylandi').length;
-  const veliUyari = veliBekle>0 ? `
-    <div class="card pad" style="border-left:5px solid var(--blue);background:var(--blue-bg);margin-bottom:12px">
-      <div class="row" style="justify-content:space-between">
-        <div><b style="color:var(--blue-ink)">${veliBekle} öğrencide veli onayı bekleniyor.</b> <span class="muted">Program gönderin / dönüşü işaretleyin.</span></div>
-        <div class="row"><button class="btn ghost sm" id="veliToplu">📨 Toplu gönder</button><button class="btn sm" data-goto-veli="1">Gör →</button></div>
-      </div>
-    </div>` : '';
-  const veliUygula = veliOnayli>0 ? `
-    <div class="card pad" style="border-left:5px solid var(--ok);background:var(--ok-bg);margin-bottom:12px">
-      <div class="row" style="justify-content:space-between">
-        <div><b style="color:#0d6b47">${veliOnayli} onaylı program var.</b> <span class="muted">Bu haftanın planına toplu uygulayın.</span></div>
-        <button class="btn sm" id="veliTopluUygula">📌 Haftaya uygula</button>
-      </div>
-    </div>` : '';
   const rvBekle = randevuBekleyen();
-  const rvUyari = rvBekle>0 ? `
-    <div class="card pad" style="border-left:5px solid var(--amber);background:var(--amber-bg);margin-bottom:12px">
-      <div class="row" style="justify-content:space-between">
-        <div><b style="color:var(--amber-ink)">${rvBekle} veli randevu talebi bekliyor.</b> <span class="muted">Onaylayın/reddedin.</span></div>
-        <button class="btn amber sm" id="rvGit">Randevular →</button>
-      </div>
-    </div>` : '';
   const eksikBelge = aktifOgr().filter(s=> s.onamVar===false || s.biyoFotoVar===false).length;
-  const belgeUyari = eksikBelge>0 ? `
-    <div class="card pad" style="border-left:5px solid var(--danger);background:var(--danger-bg);margin-bottom:12px">
-      <div class="row" style="justify-content:space-between">
-        <div><b style="color:#a12b2b">${eksikBelge} öğrencide BKDS belgesi eksik.</b> <span class="muted">Onam formu / biyometrik fotoğraf tamamlanmadan ders devam ödemesi riske girer.</span></div>
-        <button class="btn danger sm" data-goto-eksik="1" style="color:#fff">Eksikleri gör →</button>
-      </div>
-    </div>` : '';
+  const uyariSatir = [];
+  if(eksikBelge>0) uyariSatir.push(`<div class="uw"><span>🪪 <b>${eksikBelge}</b> öğrencide BKDS belgesi eksik</span><button class="btn danger sm" data-goto-eksik="1" style="color:#fff">Gör</button></div>`);
+  if(rvBekle>0) uyariSatir.push(`<div class="uw"><span>📅 <b>${rvBekle}</b> veli randevu talebi bekliyor</span><button class="btn amber sm" id="rvGit">Aç</button></div>`);
+  if(veliBekle>0) uyariSatir.push(`<div class="uw"><span>🗓️ <b>${veliBekle}</b> veli onayı bekliyor</span><div class="row" style="gap:5px"><button class="btn ghost sm" id="veliToplu">Gönder</button><button class="btn sm" data-goto-veli="1">Gör</button></div></div>`);
+  if(veliOnayli>0) uyariSatir.push(`<div class="uw"><span>✅ <b>${veliOnayli}</b> onaylı program hazır</span><button class="btn sm" id="veliTopluUygula">Haftaya uygula</button></div>`);
+  const uyariKart = uyariSatir.length ? `<div class="card" style="margin-bottom:12px;overflow:hidden">${uyariSatir.join('<hr class="hr" style="margin:0">')}</div>` : '';
 
   return `
   <div class="row" style="justify-content:space-between;margin-bottom:4px">
@@ -436,10 +418,7 @@ function viewPanel(){
     <span class="chip">${insanTarih(iso)}</span>
   </div>
   ${tatilUyari}
-  ${belgeUyari}
-  ${veliUyari}
-  ${veliUygula}
-  ${rvUyari}
+  ${uyariKart}
   <div class="stats" style="margin:12px 0">
     <div class="stat g"><div class="k">✅</div><div class="n">${geldi}</div><div class="l">Yüzü okundu / geldi</div></div>
     <div class="stat d"><div class="k">🚫</div><div class="n">${gelmedi}</div><div class="l">Gelmedi (boş slot)</div></div>
@@ -909,7 +888,8 @@ function modal(title, body, onOpen){
   root.innerHTML = `<div class="modal-bg" id="mbg"><div class="modal">
     <div class="mhead"><h3>${esc(title)}</h3><button class="xbtn" id="mx">✕</button></div>
     <div class="mbody">${body}</div></div></div>`;
-  const close=()=>{ root.innerHTML=''; };
+  document.body.style.overflow='hidden';
+  const close=()=>{ root.innerHTML=''; document.body.style.overflow=''; };
   $('#mx').onclick=close;
   $('#mbg').onclick=(e)=>{ if(e.target.id==='mbg') close(); };
   if(onOpen) onOpen(close);
@@ -1573,7 +1553,7 @@ function settingsModal(){
     $('#stGeri').onclick=()=>$('#stGeriInput').click();
     $('#stGeriInput').onchange=(e)=>{ const f=e.target.files[0]; if(!f)return; const r=new FileReader(); r.onload=()=>{ try{ const d=JSON.parse(r.result); DB.students=d.students||DB.students; DB.uzmanlar=d.uzmanlar||DB.uzmanlar; DB.plans=d.plans||DB.plans; DB.randevular=d.randevular||DB.randevular||[]; DB.settings=Object.assign(defaultSettings(),d.settings||S()); save(); close(); render(); toast('Geri yüklendi ✓','ok'); }catch(err){ toast('Dosya okunamadı','err'); } }; r.readAsText(f); };
     $('#stDemo').onclick=()=>{ demoYukle(); close(); };
-    $('#stTemizle').onclick=()=>{ if(confirm('TÜM veriler silinecek. Emin misiniz?')){ localStorage.removeItem(DB_KEY); location.reload(); } };
+    $('#stTemizle').onclick=()=>{ if(confirm('TÜM veriler silinecek. Emin misiniz?')){ localStorage.removeItem(curKey()); location.reload(); } };
     // kaydet
     $('#stKaydet').onclick=()=>{
       const st=S();
@@ -2110,12 +2090,15 @@ function otoHaftaKontrol(){
 /* ---- Günlük Plan: ⚡ Otomatik menü ---- */
 function planOtomatikMenu(){
   const body=`
+    <button class="btn block" id="otoCizelge">🧩 Çakışmasız çizelge oluştur (bugün)</button>
+    <div class="muted" style="font-size:.78rem;margin:6px 2px 12px">Öğrencileri branş/oturuma göre uzmanlara <b>çakışmasız</b> otomatik dağıtır. Çok öğretmenli kurumlar için idealdir.</div>
     <button class="btn block" id="otoBugun">📅 Bugünü onaylı programlardan doldur</button>
     <div class="muted" style="font-size:.78rem;margin:6px 2px 12px">${GUN_ADI[isoToDate(GDATE).getDay()]} günü ders programı olan onaylı öğrenciler otomatik plana eklenir.</div>
     <button class="btn block amber" id="otoAlt">↔ Boş (gelmedi) slotları alternatifle doldur</button>
     <div class="muted" style="font-size:.78rem;margin:6px 2px 12px">Gelmeyen her öğrencinin yerine en uygun aday otomatik çağrılır.</div>
     <button class="btn ghost block" id="otoUzman">🧑‍⚕️ Uzman günlük çizelgesi</button>`;
   modal('⚡ Otomatik işlemler', body, (close)=>{
+    $('#otoCizelge').onclick=()=>{ close(); otomatikCizelge(GDATE); };
     $('#otoBugun').onclick=()=>{ close(); bugunuProgramdanDoldur(); };
     $('#otoAlt').onclick=()=>{ close(); bosSlotAlternatifDoldur(); };
     $('#otoUzman').onclick=()=>{ close(); uzmanCizelgesi(); };
@@ -2742,14 +2725,14 @@ function topluIceAktar(tur){
 /* ================= DEMO MODU ================= */
 function demoAktif(){ return localStorage.getItem('reha_demo')==='1'; }
 function demoModaGir(){
-  localStorage.setItem('reha_demo','1');
-  load();
-  if(DB.students.length===0){ demoYukle(); }
-  else if(!S().kurumAdi){ S().kurumAdi='Demo Rehabilitasyon Merkezi'; save(); }
+  localStorage.setItem('reha_demo','1');   // artık curKey() DEMO_KEY döner
+  load();                                   // demo hafızasını oku (gerçek veri DB_KEY'de dokunulmaz)
+  if(DB.students.length===0){ demoYukle(); } // demo boşsa örnekle doldur (DEMO_KEY'e yazılır)
+  if(!S().kurumAdi){ S().kurumAdi='Demo Rehabilitasyon Merkezi'; save(); }
   const ov=$('#lisansOverlay'); if(ov) ov.remove();
   baslatUygulama(true);
   demoBanner();
-  toast('Demo modundasınız — tüm özellikleri deneyebilirsiniz 🎬','ok');
+  toast('Demo modundasınız — gerçek verileriniz ayrı ve güvende 🎬','ok');
 }
 function demoBanner(){
   if($('#demoBanner')) return;
@@ -2758,7 +2741,7 @@ function demoBanner(){
   b.innerHTML=`🎬 DEMO MODU — inceleme amaçlıdır <button id="demoCik" style="background:#3a2400;color:#fff;border-radius:8px;padding:3px 10px;font-weight:700;font-size:.72rem">Çıkış / Satın Al</button>`;
   document.body.appendChild(b);
   document.body.style.paddingTop='26px';
-  $('#demoCik').onclick=()=>{ if(confirm('Demo modundan çıkılsın mı? (Demo verileri silinip lisans ekranına dönülür)')){ localStorage.removeItem('reha_demo'); localStorage.removeItem(DB_KEY); location.reload(); } };
+  $('#demoCik').onclick=()=>{ if(confirm('Demo modundan çıkılsın mı?')){ localStorage.removeItem('reha_demo'); localStorage.removeItem(DEMO_KEY); location.reload(); } };
 }
 
 /* ================= MEB VELİ RANDEVU ================= */
@@ -2842,6 +2825,45 @@ function gridCizelge(){
     $('#grPdf').onclick=()=>window.ZIRVE_pdfPaylas({el:$('#gridSheet'),baslik:`Cizelge-${iso}`});
     $('#grWa').onclick=()=>{ window.ZIRVE_gorselPaylas({el:$('#gridSheet'),baslik:`Cizelge-${iso}`}); toast('Görseli öğretmen grubuna gönderebilirsiniz','ok'); };
   });
+}
+
+/* ================= ÇAKIŞMASIZ OTOMATİK ÇİZELGE ================= */
+function otomatikCizelge(iso){
+  iso = iso || GDATE;
+  const gun = isoToDate(iso).getDay();
+  const uzmanlar = DB.uzmanlar.filter(u=> !u.gunler || u.gunler.length===0 || u.gunler.includes(gun));
+  if(!uzmanlar.length){ toast('Bugün çalışan uzman yok — önce uzman ekleyin','warn'); return; }
+  const sabahSlots = slotSaatleri('sabah');
+  const oglenSlots = slotSaatleri('oglen');
+  const busy={}; uzmanlar.forEach(u=>busy[u.id]=new Set());
+  // zaten planlı olan uzman-saatleri işaretle
+  planOf(iso).forEach(e=>{ if(e.uzmanId && busy[e.uzmanId]) busy[e.uzmanId].add(e.saat); });
+  const zatenPlanli = new Set(planOf(iso).map(p=>p.studentId));
+  const students = aktifOgr().filter(s=>!zatenPlanli.has(s.id));
+  const yeni=[]; let yerlesmeyen=0;
+  for(const s of students){
+    const slots = s.oturum==='oglen'?oglenSlots : s.oturum==='sabah'?sabahSlots : sabahSlots.concat(oglenSlots);
+    // uygun uzmanlar: oturum uyumlu, branş eşleşen öne
+    const uygun = uzmanlar
+      .filter(u=> u.oturum==='tam' || u.oturum===s.oturum || s.oturum==='farketmez')
+      .sort((a,b)=> ((b.brans===s.bransIhtiyac)?1:0) - ((a.brans===s.bransIhtiyac)?1:0));
+    if(!uygun.length){ yerlesmeyen++; continue; }
+    let atandi=false;
+    for(const saat of slots){
+      for(const u of uygun){
+        if(!busy[u.id].has(saat)){
+          busy[u.id].add(saat);
+          yeni.push({id:uid(),studentId:s.id,saat,tur:s.dersTuru==='grup'?'grup':'bireysel',dk:40,uzmanId:u.id,durum:'planli',alternatifMi:false,otomatik:true});
+          atandi=true; break;
+        }
+      }
+      if(atandi) break;
+    }
+    if(!atandi) yerlesmeyen++;
+  }
+  if(!yeni.length){ toast('Yerleştirilecek uygun öğrenci/slot bulunamadı','warn'); return; }
+  planOf(iso).push(...yeni); save(); render();
+  toast(`🧩 ${yeni.length} öğrenci ÇAKIŞMASIZ yerleştirildi${yerlesmeyen?` · ${yerlesmeyen} kapasiteye sığmadı`:''} ✓`,'ok');
 }
 
 </script>
