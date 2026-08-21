@@ -151,7 +151,7 @@ a{color:var(--pine)}
 .durbtn.gelmedi.on{background:var(--danger);color:#fff;border-color:var(--danger)}
 
 /* modal */
-.modal-bg{position:fixed;inset:0;z-index:80;background:rgba(10,30,30,.55);backdrop-filter:blur(4px);display:flex;align-items:flex-end;justify-content:center;padding:0;animation:fade .2s}
+.modal-bg{position:fixed;inset:0;z-index:9500;background:rgba(10,30,30,.55);backdrop-filter:blur(4px);display:flex;align-items:flex-end;justify-content:center;padding:0;animation:fade .2s}
 @media(min-width:640px){.modal-bg{align-items:center;padding:20px}}
 .modal{background:var(--bg);width:100%;max-width:620px;max-height:92vh;overflow-y:auto;border-radius:22px 22px 0 0;box-shadow:var(--shadow-lg);animation:slideup .28s cubic-bezier(.2,.9,.3,1)}
 @media(min-width:640px){.modal{border-radius:22px}}
@@ -163,7 +163,7 @@ a{color:var(--pine)}
 @keyframes slideup{from{transform:translateY(40px);opacity:.4}to{transform:translateY(0);opacity:1}}
 
 /* toast */
-#toasts{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(78px + env(safe-area-inset-bottom));z-index:120;display:flex;flex-direction:column;gap:8px;width:min(92vw,420px)}
+#toasts{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(78px + env(safe-area-inset-bottom));z-index:9700;display:flex;flex-direction:column;gap:8px;width:min(92vw,420px)}
 .toast{background:var(--pine-2);color:#fff;padding:12px 16px;border-radius:13px;box-shadow:var(--shadow-lg);font-weight:600;font-size:.9rem;display:flex;gap:9px;align-items:center;animation:slideup .25s}
 .toast.ok{background:var(--ok)}.toast.err{background:var(--danger)}.toast.warn{background:#b9820a}
 
@@ -247,6 +247,7 @@ details p,details ul{margin:0 0 12px}
 <div id="modalRoot"></div>
 
 <script>
+const TR_ILILCE = {"İstanbul":["Adalar","Arnavutköy","Ataşehir","Avcılar","Bağcılar","Bahçelievler","Bakırköy","Başakşehir","Bayrampaşa","Beşiktaş","Beykoz","Beylikdüzü","Beyoğlu","Büyükçekmece","Çatalca","Çekmeköy","Esenler","Esenyurt","Eyüp","Fatih","Gaziosmanpaşa","Güngören","Kadıköy","Kağıthane","Kartal","Küçükçekmece","Maltepe","Pendik","Sancaktepe","Sarıyer","Şile","Silivri","Şişli","Sultanbeyli","Sultangazi","Tuzla","Ümraniye","Üsküdar","Zeytinburnu"],"Ardahan":["Ardahan","Çıldır","Damal","Göle","Hanak","Posof"],"Adana":["Aladağ","Ceyhan","Çukurova","Feke","İmamoğlu","Karaisalı","Karataş","Kozan","Pozantı","Saimbeyli","Sarıçam","Seyhan","Tufanbeyli","Yumurtalık","Yüreğir"],"Artvin":["Ardanuç","Arhavi","Artvin","Borçka","Hopa","Murgul","Şavşat","Yusufeli"],"Batman":["Batman","Beşiri","Gercüş","Hasankeyf","Kozluk","Sason"],"Ağrı":["Ağrı","Diyadin","Doğubeyazıt","Eleşkirt","Hamur","Patnos","Taşlıçay","Tutak"],"İzmir":["Aliağa","Balçova","Bayındır","Bayraklı","Bergama","Beydağ","Bornova","Buca","Çeşme","Çiğli","Dikili","Foça","Gaziemir","Güzelbahçe","Karabağlar","Karaburun","Karşıyaka","Kemalpaşa","Kınık","Kiraz","Konak","Menderes","Menemen","Narlıdere","Ödemiş","Seferihisar","Selçuk","Tire","Torbalı","Urla"],"Adıyaman":["Adıyaman","Besni","Çelikhan","Gerger","Gölbaşı","Kahta","Samsat","Sincik","Tut"],"Ankara":["Akyurt","Altındağ","Ayaş","Bala","Beypazarı","Çamlıdere","Çankaya","Çubuk","Elmadağ","Etimesgut","Evren","Gölbaşı","Güdül","Haymana","Kalecik","Kazan","Keçiören","Kızılcahamam","Mamak","Nallıhan","Polatlı","Pursaklar","Şereflikoçhisar","Sincan","Yenimahalle"],"Aydın":["Aydın","Bozdoğan","Buharkent","Çine","Didim","Germencik","İncirliova","Karacasu","Karpuzlu","Koçarlı","Köşk","Kuşadası","Kuyucak","Nazilli","Söke","Sultanhisar","Yenipazar"],"Aksaray":["Ağaçören","Aksaray","Eskil","Gülağaç","Güzelyurt","Ortaköy","Sarıyahşi"],"Bartın":["Amasra","Bartın","Kurucaşile","Ulus"],"Afyonkarahisar":["Afyon","Başmakçı","Bayat","Bolvadin","Çay","Çobanlar","Dazkırı","Dinar","Emirdağ","Evciler","Hocalar","İhsaniye","İscehisar","Kızılören","Sandıklı","Sincanlı","Şuhut","Sultandağı"],"Balıkesir":["Ayvalık","Balıkesir","Balya","Bandırma","Bigadiç","Burhaniye","Dursunbey","Edremit","Erdek","Gömeç","Gönen","Havran","İvrindi","Kepsut","Manyas","Marmara","Savaştepe","Sındırgı","Susurluk"],"Antalya":["Akseki","Aksu","Alanya","Demre","Döşemealtı","Elmalı","Finike","Gazipaşa","Gündoğmuş","İbradı","Kaş","Kemer","Kepez","Konyaaltı","Korkuteli","Kumluca","Manavgat","Muratpaşa","Serik"],"Bursa":["Büyükorhan","Gemlik","Gürsu","Harmancık","İnegöl","İznik","Karacabey","Keles","Kestel","Mudanya","Mustafakemalpaşa","Nilüfer","Orhaneli","Orhangazi","Osmangazi","Yenişehir","Yıldırım"],"Amasya":["Amasya","Göynücek","Gümüşhacıköy","Hamamözü","Merzifon","Suluova","Taşova"],"Çanakkale":["Ayvacık","Bayramiç","Biga","Bozcaada","Çan","Çanakkale","Eceabat","Ezine","Gelibolu","Gökçeada","Lapseki","Yenice"],"Bayburt":["Aydıntepe","Bayburt","Demirözü"],"Diyarbakır":["Bağlar","Bismil","Çermik","Çınar","Çüngüş","Dicle","Eğil","Ergani","Hani","Hazro","Kayapınar","Kocaköy","Kulp","Lice","Silvan","Sur","Yenişehir"],"Bilecik":["Bilecik","Bozüyük","Gölpazarı","İnhisar","Osmaneli","Pazaryeri","Söğüt","Yenipazar"],"Bingöl":["Adaklı","Bingöl","Genç","Karlıova","Kiğı","Solhan","Yayladere","Yedisu"],"Burdur":["Ağlasun","Altınyayla","Bucak","Burdur","Çavdır","Çeltikçi","Gölhisar","Karamanlı","Kemer","Tefenni","Yeşilova"],"Düzce":["Akçakoca","Çilimli","Cumayeri","Düzce","Gölyaka","Gümüşova","Kaynaşlı","Yığılca"],"Çorum":["Alaca","Bayat","Boğazkale","Çorum","Dodurga","İskilip","Kargı","Laçin","Mecitözü","Oğuzlar","Ortaköy","Osmancık","Sungurlu","Uğurludağ"],"Çankırı":["Atkaracalar","Bayramören","Çankırı","Çerkeş","Eldivan","Ilgaz","Kızılırmak","Korgun","Kurşunlu","Orta","Şabanözü","Yapraklı"],"Bitlis":["Adilcevaz","Ahlat","Bitlis","Güroymak","Hizan","Mutki","Tatvan"],"Gümüşhane":["Gümüşhane","Kelkit","Köse","Kürtün","Şiran","Torul"],"Bolu":["Bolu","Dörtdivan","Gerede","Göynük","Kıbrıscık","Mengen","Mudurnu","Seben","Yeniçağa"],"Kahramanmaraş":["Afşin","Andırın","Çağlıyancerit","Ekinözü","Elbistan","Göksun","Kahramanmaraş","Nurhak","Pazarcık","Türkoğlu"],"Karaman":["Ayrancı","Başyayla","Ermenek","Karaman","Kazımkarabekir","Sarıveliler"],"Edirne":["Edirne","Enez","Havsa","İpsala","Keşan","Lalapaşa","Meriç","Süloğlu","Uzunköprü"],"Erzurum":["Aşkale","Aziziye","Çat","Hınıs","Horasan","İspir","Karaçoban","Karayazı","Köprüköy","Narman","Oltu","Olur","Palandöken","Pasinler","Pazaryolu","Şenkaya","Tekman","Tortum","Uzundere","Yakutiye"],"Hakkari":["Çukurca","Hakkari","Şemdinli","Yüksekova"],"Eskişehir":["Alpu","Beylikova","Çifteler","Günyüzü","Han","İnönü","Mahmudiye","Mihalgazi","Mihalıççık","Odunpazarı","Sarıcakaya","Seyitgazi","Sivrihisar","Tepebaşı"],"Elazığ":["Ağın","Alacakaya","Arıcak","Baskil","Elazığ","Karakoçan","Keban","Kovancılar","Maden","Palu","Sivrice"],"Karabük":["Eflani","Eskipazar","Karabük","Ovacık","Safranbolu","Yenice"],"Giresun":["Alucra","Bulancak","Çamoluk","Çanakçı","Dereli","Doğankent","Espiye","Eynesil","Giresun","Görele","Güce","Keşap","Piraziz","Şebinkarahisar","Tirebolu","Yağlıdere"],"Iğdır":["Aralık","Iğdır","Karakoyunlu","Tuzluca"],"Gaziantep":["Araban","İslahiye","Karkamış","Nizip","Nurdağı","Oğuzeli","Şahinbey","Şehitkamil","Yavuzeli"],"Hatay":["Altınözü","Antakya","Belen","Dörtyol","Erzin","Hassa","İskenderun","Kırıkhan","Kumlu","Reyhanlı","Samandağ","Yayladağı"],"Erzincan":["Çayırlı","Erzincan","Ilıç","Kemah","Kemaliye","Otlukbeli","Refahiye","Tercan","Üzümlü"],"Denizli":["Acıpayam","Akköy","Babadağ","Baklan","Bekilli","Beyağaç","Bozkurt","Buldan","Çal","Çameli","Çardak","Çivril","Denizli","Güney","Honaz","Kale","Sarayköy","Serinhisar","Tavas"],"Isparta":["Aksu","Atabey","Eğirdir","Gelendost","Gönen","Isparta","Keçiborlu","Şarkikaraağaç","Senirkent","Sütçüler","Uluborlu","Yalvaç","Yenişarbademli"],"Kars":["Akyaka","Arpaçay","Digor","Kağızman","Kars","Sarıkamış","Selim","Susuz"],"Konya":["Ahırlı","Akören","Akşehir","Altınekin","Beyşehir","Bozkır","Çeltik","Cihanbeyli","Çumra","Derbent","Derebucak","Doğanhisar","Emirgazi","Ereğli","Güneysınır","Hadim","Halkapınar","Hüyük","Ilgın","Kadınhanı","Karapınar","Karatay","Kulu","Meram","Sarayönü","Selçuklu","Seydişehir","Taşkent","Tuzlukçu","Yalıhüyük","Yunak"],"Kırklareli":["Babaeski","Demirköy","Kırklareli","Kofçaz","Lüleburgaz","Pehlivanköy","Pınarhisar","Vize"],"Kastamonu":["Abana","Ağlı","Araç","Azdavay","Bozkurt","Çatalzeytin","Cide","Daday","Devrekani","Doğanyurt","Hanönü","İhsangazi","İnebolu","Kastamonu","Küre","Pınarbaşı","Şenpazar","Seydiler","Taşköprü","Tosya"],"Kilis":["Elbeyli","Kilis","Musabeyli","Polateli"],"Kırşehir":["Akçakent","Akpınar","Boztepe","Çiçekdağı","Kaman","Kırşehir","Mucur"],"Mersin":["Akdeniz","Anamur","Aydıncık","Bozyazı","Çamlıyayla","Erdemli","Gülnar","Mezitli","Mut","Silifke","Tarsus","Toroslar","Yenişehir"],"Kocaeli":["Başiskele","Çayırova","Darıca","Derince","Dilovası","Gebze","Gölcük","İzmit","Kandıra","Karamürsel","Kartepe","Körfez"],"Manisa":["Ahmetli","Akhisar","Alaşehir","Demirci","Gölmarmara","Gördes","Kırkağaç","Köprübaşı","Kula","Manisa","Salihli","Sarıgöl","Saruhanlı","Selendi","Soma","Turgutlu"],"Malatya":["Akçadağ","Arapkir","Arguvan","Battalgazi","Darende","Doğanşehir","Doğanyol","Hekimhan","Kale","Kuluncak","Malatya","Pütürge","Yazıhan","Yeşilyurt"],"Muğla":["Bodrum","Dalaman","Datça","Fethiye","Kavaklıdere","Köyceğiz","Marmaris","Milas","Muğla","Ortaca","Ula","Yatağan"],"Muş":["Bulanık","Hasköy","Korkut","Malazgirt","Muş","Varto"],"Kayseri":["Akkışla","Bünyan","Develi","Felahiye","Hacılar","İncesu","Kocasinan","Melikgazi","Özvatan","Pınarbaşı","Sarıoğlan","Sarız","Talas","Tomarza","Yahyalı","Yeşilhisar"],"Kırıkkale":["Bahşili","Balışeyh","Çelebi","Delice","Karakeçili","Keskin","Kırıkkale","Sulakyurt","Yahşihan"],"Mardin":["Dargeçit","Derik","Kızıltepe","Mardin","Mazıdağı","Midyat","Nusaybin","Ömerli","Savur","Yeşilli"],"Kütahya":["Altıntaş","Aslanapa","Çavdarhisar","Domaniç","Dumlupınar","Emet","Gediz","Hisarcık","Kütahya","Pazarlar","Şaphane","Simav","Tavşanlı"],"Niğde":["Altunhisar","Bor","Çamardı","Çiftlik","Niğde","Ulukışla"],"Nevşehir":["Acıgöl","Avanos","Derinkuyu","Gülşehir","Hacıbektaş","Kozaklı","Nevşehir","Ürgüp"],"Şanlıurfa":["Akçakale","Birecik","Bozova","Ceylanpınar","Halfeti","Harran","Hilvan","Şanlıurfa","Siverek","Suruç","Viranşehir"],"Ordu":["Akkuş","Aybastı","Çamaş","Çatalpınar","Çaybaşı","Fatsa","Gölköy","Gülyalı","Gürgentepe","İkizce","Kabadüz","Kabataş","Korgan","Kumru","Mesudiye","Ordu","Perşembe","Ulubey","Ünye"],"Tokat":["Almus","Artova","Başçiftlik","Erbaa","Niksar","Pazar","Reşadiye","Sulusaray","Tokat","Turhal","Yeşilyurt","Zile"],"Yozgat":["Akdağmadeni","Aydıncık","Boğazlıyan","Çandır","Çayıralan","Çekerek","Kadışehri","Saraykent","Sarıkaya","Şefaatli","Sorgun","Yenifakılı","Yerköy","Yozgat"],"Osmaniye":["Bahçe","Düziçi","Hasanbeyli","Kadirli","Osmaniye","Sumbas","Toprakkale"],"Samsun":["Alaçam","Asarcık","Atakum","Ayvacık","Bafra","Canik","Çarşamba","Havza","İlkadım","Kavak","Ladik","Ondokuzmayıs","Salıpazarı","Tekkeköy","Terme","Vezirköprü","Yakakent"],"Sivas":["Akıncılar","Altınyayla","Divriği","Doğanşar","Gemerek","Gölova","Gürün","Hafik","İmranlı","Kangal","Koyulhisar","Şarkışla","Sivas","Suşehri","Ulaş","Yıldızeli","Zara"],"Sinop":["Ayancık","Boyabat","Dikmen","Durağan","Erfelek","Gerze","Saraydüzü","Sinop","Türkeli"],"Rize":["Ardeşen","Çamlıhemşin","Çayeli","Derepazarı","Fındıklı","Güneysu","Hemşin","İkizdere","İyidere","Kalkandere","Pazar","Rize"],"Şırnak":["Beytüşşebap","Cizre","Güçlükonak","İdil","Silopi","Şırnak","Uludere"],"Tunceli":["Çemişgezek","Hozat","Mazgirt","Nazımiye","Ovacık","Pertek","Pülümür","Tunceli"],"Siirt":["Aydınlar","Baykan","Eruh","Kurtalan","Pervari","Siirt","Şirvan"],"Yalova":["Altınova","Armutlu","Çiftlikköy","Çınarcık","Termal","Yalova"],"Van":["Bahçesaray","Başkale","Çaldıran","Çatak","Edremit","Erciş","Gevaş","Gürpınar","Muradiye","Özalp","Saray","Van"],"Sakarya":["Adapazarı","Akyazı","Arifiye","Erenler","Ferizli","Geyve","Hendek","Karapürçek","Karasu","Kaynarca","Kocaali","Pamukova","Sapanca","Serdivan","Söğütlü","Taraklı"],"Tekirdağ":["Çerkezköy","Çorlu","Hayrabolu","Malkara","Marmaraereğlisi","Muratlı","Saray","Şarköy","Tekirdağ"],"Trabzon":["Akçaabat","Araklı","Arsin","Beşikdüzü","Çarşıbaşı","Çaykara","Dernekpazarı","Düzköy","Hayrat","Köprübaşı","Maçka","Of","Şalpazarı","Sürmene","Tonya","Trabzon","Vakfıkebir","Yomra"],"Uşak":["Banaz","Eşme","Karahallı","Sivaslı","Ulubey","Uşak"],"Zonguldak":["Alaplı","Çaycuma","Devrek","Gökçebey","Karadenizereğli","Zonguldak"]};
 /* ============================================================
    REHA Planla — çekirdek mantık
    ============================================================ */
@@ -279,9 +280,12 @@ function toast(msg, tip='') {
    ============================================================ */
 const DB_KEY = 'reha_planla_v1';
 const defaultSettings = () => ({
-  kurumAdi: '', personel: '',
-  baslangic: '09:00', dersDk: 40, molaDk: 10, gunlukSlot: 8,
+  kurumAdi: '', personel: '', il: '', ilce: '',
+  baslangic: '09:00', dersDk: 40, molaDk: 10, gunlukSlot: 8, beklemeDk: 50,
+  otoHafta: true, veliWebhook: '',
   tatilGunleri: [0],                 // JS getDay: 0=Pazar
+  subeler: [],                       // [{id,ad,il,ilce}]
+  servisDetay: [],                   // [{ad,il,ilce,mahalleler:[]}]
   servisler: ['1. Servis','2. Servis','3. Servis','Servis Yok'],
   tanilar: ['Zihinsel Yetersizlik','Otizm (OSB)','Dil ve Konuşma Bozukluğu','İşitme Yetersizliği','Görme Yetersizliği','Bedensel Yetersizlik','Özgül Öğrenme Güçlüğü','DEHB'],
   branslar: ['Özel Eğitim Öğretmeni','Dil ve Konuşma Terapisti','Ergoterapist','Fizyoterapist','Psikolog'],
@@ -298,6 +302,8 @@ function load() {
       DB.uzmanlar = p.uzmanlar || [];
       DB.plans = p.plans || {};
       DB.settings = Object.assign(defaultSettings(), p.settings || {});
+      if(!Array.isArray(DB.settings.subeler)) DB.settings.subeler = [];
+      if(!Array.isArray(DB.settings.servisDetay)) DB.settings.servisDetay = [];
     }
   } catch(e){ console.warn('load hata', e); }
 }
@@ -390,12 +396,40 @@ function viewPanel(){
 
   const tatilUyari = tatil ? `<div class="note-box" style="margin-bottom:14px">🌙 <b>${GUN_ADI[gun]}</b> kurum ayarlarında tatil olarak işaretli. Yine de plan girebilirsiniz.</div>` : '';
 
+  const veliBekle = aktifOgr().filter(s=> (s.program&&s.program.length) && (s.veliOnay||'beklemede')!=='onaylandi').length;
+  const veliOnayli = aktifOgr().filter(s=> (s.program&&s.program.length) && s.veliOnay==='onaylandi').length;
+  const veliUyari = veliBekle>0 ? `
+    <div class="card pad" style="border-left:5px solid var(--blue);background:var(--blue-bg);margin-bottom:12px">
+      <div class="row" style="justify-content:space-between">
+        <div><b style="color:var(--blue-ink)">${veliBekle} öğrencide veli onayı bekleniyor.</b> <span class="muted">Program gönderin / dönüşü işaretleyin.</span></div>
+        <div class="row"><button class="btn ghost sm" id="veliToplu">📨 Toplu gönder</button><button class="btn sm" data-goto-veli="1">Gör →</button></div>
+      </div>
+    </div>` : '';
+  const veliUygula = veliOnayli>0 ? `
+    <div class="card pad" style="border-left:5px solid var(--ok);background:var(--ok-bg);margin-bottom:12px">
+      <div class="row" style="justify-content:space-between">
+        <div><b style="color:#0d6b47">${veliOnayli} onaylı program var.</b> <span class="muted">Bu haftanın planına toplu uygulayın.</span></div>
+        <button class="btn sm" id="veliTopluUygula">📌 Haftaya uygula</button>
+      </div>
+    </div>` : '';
+  const eksikBelge = aktifOgr().filter(s=> s.onamVar===false || s.biyoFotoVar===false).length;
+  const belgeUyari = eksikBelge>0 ? `
+    <div class="card pad" style="border-left:5px solid var(--danger);background:var(--danger-bg);margin-bottom:12px">
+      <div class="row" style="justify-content:space-between">
+        <div><b style="color:#a12b2b">${eksikBelge} öğrencide BKDS belgesi eksik.</b> <span class="muted">Onam formu / biyometrik fotoğraf tamamlanmadan ders devam ödemesi riske girer.</span></div>
+        <button class="btn danger sm" data-goto-eksik="1" style="color:#fff">Eksikleri gör →</button>
+      </div>
+    </div>` : '';
+
   return `
   <div class="row" style="justify-content:space-between;margin-bottom:4px">
     <h2>Panel</h2>
     <span class="chip">${insanTarih(iso)}</span>
   </div>
   ${tatilUyari}
+  ${belgeUyari}
+  ${veliUyari}
+  ${veliUygula}
   <div class="stats" style="margin:12px 0">
     <div class="stat g"><div class="k">✅</div><div class="n">${geldi}</div><div class="l">Yüzü okundu / geldi</div></div>
     <div class="stat d"><div class="k">🚫</div><div class="n">${gelmedi}</div><div class="l">Gelmedi (boş slot)</div></div>
@@ -450,7 +484,9 @@ function viewPlan(){
   <div class="row" style="justify-content:space-between">
     <h2>Günlük Plan</h2>
     <div class="row">
-      <button class="btn ghost sm" id="planEkle">➕ Plana öğrenci</button>
+      <button class="btn amber sm" id="otoBtn">⚡ Otomatik</button>
+      <button class="btn ghost sm" id="planEkle">➕ Öğrenci</button>
+      <button class="btn ghost sm" id="cizelgeBtn">🚌 Servis</button>
       <button class="btn sm" id="yoklamaBtn">🖨️ Yoklama</button>
     </div>
   </div>
@@ -478,8 +514,10 @@ function planSlot(e){
       <div class="info">
         <div class="nm">${esc(s.ad)} ${e.alternatifMi?'<span class="chip" style="background:#fff3d6;color:#8a5510">↔ alternatif</span>':''}</div>
         <div class="meta">
-          <span class="chip ${s.oturum}">${e.saat||(s.oturum==='sabah'?'Sabah':'Öğlen')}</span>
-          <span class="chip ${e.tur==='grup'?'grup':''}">${e.tur==='grup'?'Grup':'Bireysel'}</span>
+          ${(()=>{ const b=saatEkle(e.saat,e.dk||40); return `<span class="chip ${s.oturum}">${e.saat||(s.oturum==='sabah'?'Sabah':'Öğlen')}${b?'–'+b:''}</span>`; })()}
+          <span class="chip ${e.tur==='grup'?'grup':''}">${e.tur==='grup'?'Grup':'Bireysel'} · ${e.dk||40}dk</span>
+          ${(e.dk||40)<=40?`<span class="chip" style="background:#fdf1dd;color:#8a5510" title="Tek ders — servis düzeni gereği bekleme olabilir">⏳ ~${S().beklemeDk}dk</span>`:''}
+          ${(()=>{ const c=cakismaVar(GDATE,e); return c?`<span class="chip dolmus" title="${esc(c)}">⛔ Çakışma</span>`:''; })()}
           ${s.tani?`<span class="chip servis">${esc(kisaTani(s.tani))}</span>`:''}
           ${e.uzmanId?`<span class="chip">${esc((uzmById(e.uzmanId)||{}).ad||'')}</span>`:''}
         </div>
@@ -494,6 +532,11 @@ function planSlot(e){
   </div>`;
 }
 function kisaTani(t){ return (t||'').replace(/\s*\(.*?\)/,'').split(' ').slice(0,2).join(' '); }
+function saatEkle(hhmm, dk){
+  const m=(hhmm||'').match(/^(\d{1,2}):(\d{2})$/); if(!m) return '';
+  let h=+m[1], mi=+m[2]+dk; while(mi>=60){mi-=60;h++;} h%=24;
+  return `${String(h).padStart(2,'0')}:${String(mi).padStart(2,'0')}`;
+}
 
 /* ----- Alternatif Beyni ----- */
 function altPanel(e){
@@ -562,6 +605,8 @@ function viewOgrenciler(){
   if (ogrFilter!=='hepsi') list = list.filter(s=>s.durum===ogrFilter);
   if (ogrFilter==='sabah') list = DB.students.filter(s=>s.oturum==='sabah');
   if (ogrFilter==='oglen') list = DB.students.filter(s=>s.oturum==='oglen');
+  if (ogrFilter==='eksik') list = DB.students.filter(s=> s.onamVar===false || s.biyoFotoVar===false);
+  if (ogrFilter==='veli') list = DB.students.filter(s=> (s.program&&s.program.length) && (s.veliOnay||'beklemede')!=='onaylandi');
   if (ogrSearch){ const q=ogrSearch.toLowerCase(); list = list.filter(s=>(s.ad||'').toLowerCase().includes(q)||(s.servis||'').toLowerCase().includes(q)||(s.tani||'').toLowerCase().includes(q)); }
   list.sort((a,b)=>(a.ad||'').localeCompare(b.ad||'','tr'));
 
@@ -575,7 +620,7 @@ function viewOgrenciler(){
   </div>
   <div class="searchbar" style="margin:12px 0"><span>🔍</span><input id="ogrArama" placeholder="Ad, servis veya tanı ara..." value="${esc(ogrSearch)}"></div>
   <div class="filters">
-    ${['aktif|Aktif','sabah|Sabahçı','oglen|Öğlenci','mezun|Mezun','askida|Askıda','hepsi|Hepsi'].map(f=>{const[k,l]=f.split('|');return `<button class="fbtn ${ogrFilter===k?'on':''}" data-of="${k}">${l}</button>`}).join('')}
+    ${['aktif|Aktif','sabah|Sabahçı','oglen|Öğlenci','veli|🗓️ Veli onayı','eksik|⚠️ Eksik belge','mezun|Mezun','askida|Askıda','hepsi|Hepsi'].map(f=>{const[k,l]=f.split('|');return `<button class="fbtn ${ogrFilter===k?'on':''}" data-of="${k}">${l}</button>`}).join('')}
   </div>
   ${list.length===0
     ? `<div class="empty"><div class="big">👥</div>${DB.students.length===0?'Henüz öğrenci yok.':'Bu filtrede kayıt yok.'}<br><button class="btn sm" id="ogrEkle2" style="margin-top:12px">➕ İlk öğrenciyi ekle</button></div>`
@@ -597,6 +642,8 @@ function ogrCard(s){
       </div>
       <div class="meta">
         ${s.tani?`<span class="chip">${esc(s.tani)}</span>`:''}
+        ${(s.program&&s.program.length)?`<span class="chip ${ONAY_CHIP[s.veliOnay||'beklemede']||''}">${ONAY_ETIKET[s.veliOnay||'beklemede']}</span>`:''}
+        ${(s.onamVar===false||s.biyoFotoVar===false)?`<span class="chip dolmus">⚠️ Belge eksik</span>`:''}
         ${s.aylikBireysel?`<span class="chip ${kb>0?'kalan':'dolmus'}">Bireysel: ${kb}/${s.aylikBireysel}</span>`:''}
         ${s.aylikGrup?`<span class="chip ${kg>0?'kalan':'dolmus'}">Grup: ${kg}/${s.aylikGrup}</span>`:''}
       </div>
@@ -739,8 +786,13 @@ function viewRaporlar(){
     </table>
     <div class="muted" style="font-size:.78rem;margin-top:8px">💡 Kalan hakkı yüksek olanlar, boş slot açıldığında ilk çağrılacak isimlerdir.</div>`}
   </div>
-  <button class="btn ghost block" id="yedekAl" style="margin-top:16px">💾 Tüm verileri yedekle (JSON)</button>
-  `;
+  <div class="section-title"><span class="k">🔁</span> Telafi önerilenler <span class="muted" style="font-size:.8rem;font-weight:600">(bu ay gelmeyenler)</span></div>
+  <div class="card pad">
+    ${(()=>{ const tl=telafiGerekenler(ay); return tl.length===0?'<div class="muted">Bu ay telafi gerektiren devamsızlık yok. 👍</div>':`
+      <div class="slist">${tl.slice(0,12).map(x=>`<div class="scard" style="box-shadow:none"><div class="avatar">${x.s.foto?`<img src="${x.s.foto}">`:bas(x.s.ad)}</div><div class="info"><div class="nm">${esc(x.s.ad)}</div><div class="meta"><span class="chip dolmus">${x.gelmedi} gün gelmedi</span><span class="chip servis">${esc(x.s.servis||'')}</span></div></div></div>`).join('')}</div>
+      <div class="muted" style="font-size:.78rem;margin-top:8px">💡 Mevzuata göre kaçırılan bireysel/grup dersleri ay içinde telafi edilebilir. Bu öğrencilere boş slot açıldığında öncelik verin.</div>`; })()}
+  </div>
+  <button class="btn ghost block" id="yedekAl" style="margin-top:16px">💾 Tüm verileri yedekle (JSON)</button>`;
 }
 
 /* devamı app2.js */
@@ -750,6 +802,9 @@ function viewRaporlar(){
 function bindView(){
   // panel
   $$('[data-goto]').forEach(b=>b.onclick=()=>go(b.dataset.goto));
+  const gv=$('[data-goto-veli]'); if(gv) gv.onclick=()=>{ ogrTab='ogr'; ogrFilter='veli'; go('ogrenciler'); };
+  const vtu=$('#veliTopluUygula'); if(vtu) vtu.onclick=veliTopluHaftaUygula;
+  const vtg=$('#veliToplu'); if(vtg) vtg.onclick=topluVeliGonder;
   const ik=$('#ilkKurulum'); if(ik) ik.onclick=openSettings;
   const dm=$('#demoYukle'); if(dm) dm.onclick=demoYukle;
   const yh=$('#yoklamaHizli'); if(yh) yh.onclick=yoklamaAc;
@@ -757,6 +812,9 @@ function bindView(){
   // plan
   const pe=$('#planEkle'); if(pe) pe.onclick=planEkleModal;
   const yb=$('#yoklamaBtn'); if(yb) yb.onclick=yoklamaAc;
+  const cz=$('#cizelgeBtn'); if(cz) cz.onclick=servisCizelgesi;
+  const ob=$('#otoBtn'); if(ob) ob.onclick=planOtomatikMenu;
+  const ge=$('[data-goto-eksik]'); if(ge) ge.onclick=()=>{ ogrTab='ogr'; ogrFilter='eksik'; go('ogrenciler'); };
   $$('[data-pf]').forEach(b=>b.onclick=()=>{planFilter=b.dataset.pf;render();});
   $$('[data-dur]').forEach(b=>b.onclick=()=>durumDegis(b.dataset.eid,b.dataset.dur));
   $$('[data-sil]').forEach(b=>b.onclick=()=>{ const p=planOf(GDATE); DB.plans[GDATE]=p.filter(x=>x.id!==b.dataset.sil); save(); render(); toast('Slot kaldırıldı'); });
@@ -887,7 +945,12 @@ function ogrModal(id){
       <div class="field"><label>Telefon</label><input id="oTel" value="${esc(s.telefon||'')}"></div>
     </div>
     <div class="field"><label>Not</label><textarea id="oNot" placeholder="Servis notu, özel durum...">${esc(s.notlar||'')}</textarea></div>
+    <div class="note-box" style="margin-bottom:10px"><b>BKDS kayıt belgeleri</b> <span class="muted" style="font-size:.78rem">(1 Ara 2025’ten beri ödemeye esas)</span>
+      <div class="pill-toggle"><span>📝 Bilgilendirilmiş onam formu alındı</span><div class="switch ${s.onamVar!==false?'on':''}" id="oOnam"></div></div>
+      <div class="pill-toggle" style="border-bottom:none"><span>🪪 Biyometrik fotoğraf (son 6 ay) var</span><div class="switch ${s.biyoFotoVar!==false?'on':''}" id="oBiyo"></div></div>
+    </div>
     <button class="btn block" id="oKaydet">${id?'💾 Güncelle':'➕ Öğrenciyi ekle'}</button>
+    ${id?`<button class="btn amber block" id="oProgram" style="margin-top:8px">🗓️ Haftalık program & veliye gönder</button>`:'<div class="muted" style="font-size:.78rem;text-align:center;margin-top:8px">Kaydettikten sonra haftalık program & veli gönderimi açılır.</div>'}
     ${id?`<button class="btn ghost block danger" id="oSil" style="margin-top:8px;color:#fff">🗑️ Öğrenciyi sil</button>`:''}
   `;
   const close = modal(id?'Öğrenciyi düzenle':'Yeni öğrenci', body, (close)=>{
@@ -899,16 +962,20 @@ function ogrModal(id){
     $('#fotoCek').onclick=()=>{ const fi=$('#fotoInput'); fi.setAttribute('capture','user'); fi.click(); };
     const fs=$('#fotoSil'); if(fs) fs.onclick=()=>{ foto=null; setPrev(); };
     $('#oAd').oninput=()=>{ if(!foto) setPrev(); };
+    $('#oOnam').onclick=()=>$('#oOnam').classList.toggle('on');
+    $('#oBiyo').onclick=()=>$('#oBiyo').classList.toggle('on');
     $('#oKaydet').onclick=()=>{
       const ad=$('#oAd').value.trim(); if(!ad){ toast('Ad Soyad zorunlu','warn'); return; }
       const rec={ id:s.id, ad, foto, oturum:$('#oOturum').value, servis:$('#oServis').value, dersTuru:$('#oTur').value,
         tani:$('#oTani').value, bransIhtiyac:$('#oBrans').value, aylikBireysel:+$('#oHakB').value||0, aylikGrup:+$('#oHakG').value||0,
         durum:$('#oDurum').value, veli:$('#oVeli').value.trim(), telefon:$('#oTel').value.trim(), notlar:$('#oNot').value.trim(),
+        onamVar:$('#oOnam').classList.contains('on'), biyoFotoVar:$('#oBiyo').classList.contains('on'),
         createdAt:s.createdAt||Date.now() };
       if(id){ const i=DB.students.findIndex(x=>x.id===id); DB.students[i]=rec; } else DB.students.push(rec);
       save(); close(); render(); toast(id?'Güncellendi ✓':'Öğrenci eklendi ✓','ok');
     };
     const del=$('#oSil'); if(del) del.onclick=()=>{ if(confirm(`${s.ad} silinsin mi?`)){ DB.students=DB.students.filter(x=>x.id!==id); save(); close(); render(); toast('Silindi'); } };
+    const opb=$('#oProgram'); if(opb) opb.onclick=()=>{ close(); programModal(id); };
   });
 }
 
@@ -969,7 +1036,11 @@ function planEkleModal(){
       <div class="field"><label>Saat / slot</label><select id="plSaat">${saatOpt}</select></div>
       <div class="field"><label>Ders türü</label><select id="plTur"><option value="bireysel">Bireysel</option><option value="grup">Grup</option></select></div>
     </div>
-    <div class="field"><label>Uzman (opsiyonel)</label><select id="plUzman">${uzmOpt}</select></div>
+    <div class="two">
+      <div class="field"><label>Süre</label><select id="plSure"><option value="40">Tek ders — 40 dk</option><option value="80">Çift ders — 80 dk</option></select></div>
+      <div class="field"><label>Uzman (opsiyonel)</label><select id="plUzman">${uzmOpt}</select></div>
+    </div>
+    <div class="note-box" style="font-size:.78rem;margin-bottom:8px">ℹ️ Ders ${S().dersDk} dk. <b>Tek ders</b> gelen öğrenci, servis düzeni gereği ~${S().beklemeDk} dk bekleyebilir; plan slotta gösterilir.</div>
     <div class="field"><label>Öğrenci(ler) — çoklu seçebilirsiniz</label></div>
     <div id="plListe" class="slist" style="max-height:44vh;overflow-y:auto"></div>
     <button class="btn block" id="plKaydet" style="margin-top:12px" disabled>Seçilenleri plana ekle</button>
@@ -993,8 +1064,8 @@ function planEkleModal(){
     ciz();
     $('#plAra').oninput=()=>ciz($('#plAra').value);
     $('#plKaydet').onclick=()=>{
-      const saat=$('#plSaat').value, tur=$('#plTur').value, uzmanId=$('#plUzman').value||null;
-      secili.forEach(sid=>planOf(GDATE).push({id:uid(),studentId:sid,saat,tur,uzmanId,durum:'planli',alternatifMi:false}));
+      const saat=$('#plSaat').value, tur=$('#plTur').value, uzmanId=$('#plUzman').value||null, dk=+$('#plSure').value||40;
+      secili.forEach(sid=>planOf(GDATE).push({id:uid(),studentId:sid,saat,tur,uzmanId,dk,durum:'planli',alternatifMi:false}));
       save(); close(); render(); toast(`${secili.size} öğrenci plana eklendi ✓`,'ok');
     };
   });
@@ -1367,13 +1438,30 @@ function settingsModal(){
       </div>
       <div class="two">
         <div class="field"><label>Ders süresi (dk)</label><input type="number" id="stDers" value="${st.dersDk}" min="10" max="90"></div>
-        <div class="field"><label>Ara/bekleme (dk)</label><input type="number" id="stMola" value="${st.molaDk}" min="0" max="60"></div>
+        <div class="field"><label>Slotlar arası ara (dk)</label><input type="number" id="stMola" value="${st.molaDk}" min="0" max="60"></div>
       </div>
+      <div class="field"><label>Tek ders bekleme süresi (dk)</label><input type="number" id="stBekle" value="${st.beklemeDk}" min="0" max="120"></div>
       <div class="field"><label>Tatil günleri (kuruma göre)</label><div class="filters" style="flex-wrap:wrap">${gunChk}</div></div>
       <div class="muted" style="font-size:.78rem">40 dk ders + ara ayarı, tek saatlik gelen öğrencinin bekleme mantığını yansıtır.</div>
     </details>
-    <details><summary>🏷️ Listeler (servis / tanı / branş)</summary>
-      ${listEdit('stServis',st.servisler,'Servis güzergâhları')}
+    <details><summary>📍 Kurum / şube (il · ilçe)</summary>
+      <div class="two">
+        <div class="field"><label>İl</label><select id="stIl"><option value="">— Seç —</option></select></div>
+        <div class="field"><label>İlçe</label><select id="stIlce"><option value="">— Önce il —</option></select></div>
+      </div>
+      <div class="muted" style="font-size:.78rem;margin-bottom:8px">Merkezinizin bulunduğu il/ilçe. Şubeleriniz varsa aşağıdan ekleyin.</div>
+      <div id="subeList"></div>
+      <button class="btn ghost sm block" id="subeEkle">➕ Şube ekle</button>
+      <div class="muted" style="font-size:.72rem;margin-top:6px">Not: Türkiye’deki tüm rehabilitasyon merkezlerinin güncel listesi burada gömülü değildir (yanlış/eski kayıt riski). Kendi merkez ve şubelerinizi tanımlayın.</div>
+    </details>
+    <details><summary>🚌 Servis rotaları (il/ilçe/mahalle)</summary>
+      <div class="note-box" style="margin-bottom:10px">İl ve ilçe seçince o ilçenin <b>tüm mahalleleri</b> otomatik gelir; rotaya ekleyeceklerinizi seçin. (İnternet gerekir; yoksa elle de ekleyebilirsiniz.)</div>
+      <div id="rotaList"></div>
+      <button class="btn ghost sm block" id="rotaEkle">➕ Adresli servis rotası ekle</button>
+      <div class="hr"></div>
+      ${listEdit('stServis',st.servisler,'Ek servis adları (elle, her satıra bir tane)')}
+    </details>
+    <details><summary>🏷️ Tanı / branş listeleri</summary>
       ${listEdit('stTani',st.tanilar,'Tanı / yetersizlik alanları')}
       ${listEdit('stBrans',st.branslar,'Uzmanlık dalları')}
     </details>
@@ -1382,7 +1470,14 @@ function settingsModal(){
       <div id="keyList"></div>
       <div class="row"><input id="stYeniKey" placeholder="AIza... anahtarı yapıştırın" style="flex:1;padding:10px;border:1.5px solid var(--line);border-radius:10px"><button class="btn sm" id="keyEkle">Ekle</button></div>
       <div class="row" style="margin-top:8px"><button class="btn ghost sm" id="keyTest">🧪 Anahtarları Test Et</button><a class="btn ghost sm" href="https://aistudio.google.com/apikey" target="_blank">🎁 Ücretsiz Anahtar Al</a></div>
+      <div class="row" style="margin-top:8px"><button class="btn ghost sm" id="keyKopya">📋 Anahtarları Kopyala</button><button class="btn ghost sm" id="keyIce">📥 İçe Aktar (yapıştır)</button></div>
+      <div class="muted" style="font-size:.72rem;margin-top:4px">Kopyala: anahtarları bir sonraki projeye taşımak için kod dizisi olarak panoya alır. İçe Aktar: yapıştırdığınız anahtarları toplu ekler.</div>
       <details style="margin-top:8px"><summary>Nasıl anahtar alınır?</summary><ol style="font-size:.85rem;padding-left:18px"><li>“Ücretsiz Anahtar Al”a tıklayın (Google hesabı gerekir).</li><li>“Create API key” deyin, oluşan <b>AIza...</b> ile başlayan kodu kopyalayın.</li><li>Buraya yapıştırıp “Ekle” deyin. Birden çok anahtar = daha yüksek kota.</li></ol></details>
+    </details>
+    <details><summary>🤖 Otomasyon</summary>
+      <div class="pill-toggle"><span>Hafta başında onaylı programları otomatik plana yükle</span><div class="switch ${st.otoHafta?'on':''}" id="stOtoHafta"></div></div>
+      <div class="field" style="margin-top:12px"><label>Veli gönderim webhook'u (opsiyonel)</label><input id="stWebhook" value="${esc(st.veliWebhook||'')}" placeholder="https://hook... (Make/Zapier/n8n)"></div>
+      <div class="muted" style="font-size:.75rem">Bir otomasyon servisine (Make.com, Zapier, n8n) webhook URL'i verirseniz, “Toplu veli gönderimi”nde <b>Otomatik gönder</b> ile sistem mesajı kendisi iletir (SMS/WhatsApp'a bağlayabilirsiniz). Boşsa WhatsApp ile manuel gönderilir.</div>
     </details>
     <details><summary>🎈 Yüzen düğmeler</summary><div id="floatToggles"></div>
       <button class="btn ghost sm block" id="floatHepsi" style="margin-top:8px">Hepsini göster</button></details>
@@ -1392,6 +1487,12 @@ function settingsModal(){
       <input type="file" id="stGeriInput" accept="application/json" class="hidden">
       <button class="btn ghost block sm" id="stDemo" style="margin-top:8px">🎬 Örnek verilerle doldur</button>
       <button class="btn ghost block danger" id="stTemizle" style="margin-top:8px;color:#fff">🗑️ Tüm verileri sil</button>
+    </details>
+    <details><summary>🔑 Lisans</summary>
+      <div id="lisansDurum" class="note-box" style="margin-bottom:10px">Yükleniyor…</div>
+      <div class="field"><label>Bu cihazın Kurulum Kodu</label><div class="row"><code id="lisKKset" style="flex:1;background:var(--pine-lite);color:var(--pine);padding:9px 11px;border-radius:10px;font-weight:800"></code><button class="btn ghost sm" id="lisKKsetCopy">📋</button></div></div>
+      <button class="btn ghost block sm" id="lisSaticiBtn">🔑 Satıcı / Lisans Yöneticisi</button>
+      <div class="muted" style="font-size:.72rem;margin-top:6px">Satıcı paneli müşteri için aktivasyon kodu üretir. Bu bölüm yazılımı satan içindir.</div>
     </details>
     <div class="kvkk" style="margin-top:12px">🔒 <b>KVKK / gizlilik:</b> Tüm veriler (fotoğraflar dâhil) yalnızca bu cihazın tarayıcısında saklanır; hiçbir sunucuya gönderilmez. Özel gereksinimli bireylerin biyometrik fotoğrafı özel nitelikli kişisel veridir — veli açık rızası ve kurum politikanıza uygun kullanın. AI’ye yalnızca ad/tanı gibi metin gider, fotoğraf gitmez.</div>
     <button class="btn block" id="stKaydet" style="margin-top:14px">💾 Ayarları kaydet</button>
@@ -1411,6 +1512,26 @@ function settingsModal(){
       for(const k of ks){ const r=await window.ZIRVE.anahtarTest(k.key); k.durum=r.durum; k.mesaj=r.mesaj; cizKeys(); }
       save(); btn.innerHTML='🧪 Anahtarları Test Et'; btn.disabled=false; toast('Test bitti','ok');
     };
+    $('#keyKopya').onclick=keyKopyala;
+    $('#keyIce').onclick=keyIceAktar;
+    // adres: il/ilçe
+    if($('#stIl')){
+      ilDoldur($('#stIl'), S().il, (ilName)=>{ ilceDoldur(ilName, $('#stIlce'), ''); });
+      if(S().il) ilceDoldur(S().il, $('#stIlce'), S().ilce);
+    }
+    const ohs=$('#stOtoHafta'); if(ohs) ohs.onclick=()=>ohs.classList.toggle('on');
+    // lisans
+    if($('#lisKKset')){
+      $('#lisKKset').textContent=kurulumKodu();
+      $('#lisKKsetCopy').onclick=()=>{ navigator.clipboard.writeText(kurulumKodu()); toast('Kopyalandı ✓','ok'); };
+      const l=lisansOku(); const gk=lisansGunKalan();
+      $('#lisansDurum').innerHTML = l ? (l.exp==='00000000' ? '✅ <b>Süresiz lisans</b> aktif.' : (gk>0?`✅ Lisans aktif — <b>${gk} gün</b> kaldı (bitiş ${l.exp.slice(6,8)}.${l.exp.slice(4,6)}.${l.exp.slice(0,4)}).`:'⚠️ Lisans süresi dolmuş.')) : '⚠️ Lisans bulunamadı.';
+      $('#lisSaticiBtn').onclick=saticiGiris;
+    }
+    // şubeler
+    cizSubeler(); const se=$('#subeEkle'); if(se) se.onclick=()=>subeModal(null, cizSubeler);
+    // servis rotaları
+    cizRotalar(); const re=$('#rotaEkle'); if(re) re.onclick=()=>servisRotaModal(null, ()=>{ cizRotalar(); });
     // tatil
     let tatil = st.tatilGunleri.slice();
     $$('.stTatil').forEach(b=>b.onclick=()=>{ const g=+b.dataset.g; if(tatil.includes(g)) tatil=tatil.filter(x=>x!==g); else tatil.push(g); b.classList.toggle('on'); });
@@ -1428,10 +1549,17 @@ function settingsModal(){
       const st=S();
       st.kurumAdi=$('#stKurum').value.trim(); st.personel=$('#stPersonel').value.trim();
       st.baslangic=$('#stBas').value||'09:00'; st.gunlukSlot=+$('#stSlot').value||8;
-      st.dersDk=+$('#stDers').value||40; st.molaDk=+$('#stMola').value||10;
+      st.dersDk=+$('#stDers').value||40; st.molaDk=+$('#stMola').value||10; st.beklemeDk=+$('#stBekle').value||50;
+      st.il=$('#stIl').value||''; st.ilce=$('#stIlce') ? ($('#stIlce').value||'') : st.ilce;
+      const oh=$('#stOtoHafta'); if(oh) st.otoHafta=oh.classList.contains('on');
+      const wh=$('#stWebhook'); if(wh) st.veliWebhook=wh.value.trim();
       st.tatilGunleri=tatil;
       const parse=v=>v.split('\n').map(x=>x.trim()).filter(Boolean);
-      st.servisler=parse($('#stServis').value); st.tanilar=parse($('#stTani').value); st.branslar=parse($('#stBrans').value);
+      const elleServis=parse($('#stServis').value);
+      const rotaAdlar=(S().servisDetay||[]).map(r=>r.ad);
+      st.servisler=[...new Set([...rotaAdlar, ...elleServis])];
+      if(st.servisler.length===0) st.servisler=['Servis Yok'];
+      st.tanilar=parse($('#stTani').value); st.branslar=parse($('#stBrans').value);
       save(); close(); render(); toast('Ayarlar kaydedildi ✓','ok');
       $('#brandSub').textContent = st.kurumAdi || 'Rehabilitasyon Planlama Asistanı';
     };
@@ -1526,17 +1654,23 @@ function demoYukle(){
   const st=S(); if(!st.kurumAdi) st.kurumAdi='Örnek Rehabilitasyon Merkezi';
   const adlar=['Ela Yıldız','Kerem Demir','Zeynep Kaya','Mert Aslan','Defne Şahin','Ali Yılmaz','Nisa Aydın','Poyraz Çelik','Elif Doğan','Aras Koç','Berra Öz','Efe Kılıç','Masal Arı','Kuzey Ak','Duru Er','Toprak Soy'];
   const tanilar=st.tanilar, servisler=st.servisler;
-  DB.students = adlar.map((ad,i)=>({ id:uid(), ad, foto:null, oturum: i%2?'oglen':'sabah', servis:servisler[i%(servisler.length-1)], dersTuru: i%3===0?'grup':i%3===1?'ikisi':'bireysel', tani:tanilar[i%tanilar.length], bransIhtiyac:st.branslar[i%st.branslar.length], aylikBireysel: i%3===0?0:8, aylikGrup: i%3===2?0:4, durum: i>13?'askida':'aktif', veli:'', telefon:'', notlar:'', createdAt:Date.now()-i*1000 }));
+  DB.students = adlar.map((ad,i)=>({ id:uid(), ad, foto:null, oturum: i%2?'oglen':'sabah', servis:servisler[i%(servisler.length-1)], dersTuru: i%3===0?'grup':i%3===1?'ikisi':'bireysel', tani:tanilar[i%tanilar.length], bransIhtiyac:st.branslar[i%st.branslar.length], aylikBireysel: i%3===0?0:8, aylikGrup: i%3===2?0:4, durum: i>13?'askida':'aktif', onamVar: i%5!==0, biyoFotoVar: i%7!==0, veli:'', telefon:'', notlar:'', createdAt:Date.now()-i*1000 }));
   DB.uzmanlar = [ {id:uid(),ad:'Ayşe Kaya',brans:'Özel Eğitim Öğretmeni',oturum:'tam',gunler:[1,2,3,4,5]}, {id:uid(),ad:'Burak Şen',brans:'Dil ve Konuşma Terapisti',oturum:'sabah',gunler:[1,3,5]}, {id:uid(),ad:'Ceren Ak',brans:'Ergoterapist',oturum:'oglen',gunler:[2,4]} ];
   const iso=bugunISO();
-  DB.plans[iso] = DB.students.slice(0,6).map((s,i)=>({ id:uid(), studentId:s.id, saat: slotSaatleri(s.oturum)[i%3], tur: s.dersTuru==='grup'?'grup':'bireysel', uzmanId:DB.uzmanlar[0].id, durum: i<2?'geldi':i===2?'gelmedi':'planli', alternatifMi:false }));
+  DB.plans[iso] = DB.students.slice(0,6).map((s,i)=>({ id:uid(), studentId:s.id, saat: slotSaatleri(s.oturum)[i%3], tur: s.dersTuru==='grup'?'grup':'bireysel', dk: i%2?80:40, uzmanId:DB.uzmanlar[0].id, durum: i<2?'geldi':i===2?'gelmedi':'planli', alternatifMi:false }));
+  _demoProgram();
   save(); render(); toast('Örnek veriler yüklendi 🎬','ok');
+}
+function _demoProgram(){
+  const u=DB.uzmanlar; if(DB.students[3]){ DB.students[3].program=[{id:uid(),gun:1,saat:'10:00',dk:40,tur:'bireysel',uzmanId:(u[0]||{}).id},{id:uid(),gun:3,saat:'11:20',dk:40,tur:'grup',uzmanId:(u[1]||{}).id}]; DB.students[3].veliOnay='beklemede'; DB.students[3].veli='Sn. Veli'; DB.students[3].telefon='05551112233'; }
+  if(DB.students[1]){ DB.students[1].program=[{id:uid(),gun:2,saat:'09:00',dk:80,tur:'bireysel',uzmanId:(u[0]||{}).id}]; DB.students[1].veliOnay='onaylandi'; }
 }
 
 /* ============================================================
    BAŞLATMA
    ============================================================ */
-function init(){
+function baslatUygulama(){
+  if(window._rehaBaslatildi) return; window._rehaBaslatildi=true;
   load();
   // global date
   GDATE = bugunISO();
@@ -1546,7 +1680,7 @@ function init(){
   // brand
   if(S().kurumAdi) $('#brandSub').textContent=S().kurumAdi;
   // floating controls
-  kontrolKur('help','?','Yardım',null,karsilamaAc);
+  kontrolKur('help','?','Yardım',null,tanitimAc);
   kontrolKur('qr','📲','QR',null,qrAc);
   const ek=kontrolKur('screen','📺','Oto',null,()=>{ ekranModIdx=(ekranModIdx+1)%EKRAN_MODLARI.length; localStorage.setItem('zreha_ekran_mod',ekranModIdx); ekranUygula(); ekranPillGuncelle(ek.el); toast('Ekran modu: '+EKRAN_MODLARI[ekranModIdx][0]); });
   ekranPillGuncelle(ek.el);
@@ -1561,11 +1695,685 @@ function init(){
   }
   // reading progress
   addEventListener('scroll',()=>{ const h=document.documentElement; const p=h.scrollTop/(h.scrollHeight-h.clientHeight||1)*100; $('#progTop').style.width=Math.min(100,p)+'%'; });
-  // ilk açılış karşılama
-  if(!localStorage.getItem('zreha_karsilama')){ setTimeout(karsilamaAc,400); localStorage.setItem('zreha_karsilama','1'); }
+  // ilk açılış: tam tanıtım
+  if(!localStorage.getItem('zreha_karsilama')){ setTimeout(tanitimAc,450); localStorage.setItem('zreha_karsilama','1'); }
+  gozKonforuKur();
+  otoHaftaKontrol();
+  // logo 5x dokunuş → satıcı girişi
+  let logoTik=0, logoT; const logo=document.querySelector('.brand .logo');
+  if(logo) logo.onclick=()=>{ logoTik++; clearTimeout(logoT); logoT=setTimeout(()=>logoTik=0,1200); if(logoTik>=5){ logoTik=0; saticiGiris(); } };
   render();
 }
-document.addEventListener('DOMContentLoaded', init);
+async function girisKontrol(){
+  load();
+  if(await lisansGecerli()) baslatUygulama();
+  else lisansEkraniGoster();
+}
+document.addEventListener('DOMContentLoaded', girisKontrol);
+/* ============================================================
+   app4 — Adres (il/ilçe/mahalle), servis rotaları, şube,
+   servis çizelgesi, anahtar taşıma, telafi
+   ============================================================ */
+const TR_API = 'https://api.turkiyeapi.dev/v2';
+async function apiGet(url){
+  const c = new AbortController(); const t=setTimeout(()=>c.abort(), 12000);
+  try{ const r=await fetch(url,{signal:c.signal}); clearTimeout(t); if(!r.ok) throw new Error('http '+r.status); const j=await r.json(); return j.data||j; }
+  catch(e){ clearTimeout(t); throw e; }
+}
+const trLower = s => (s||'').toLocaleLowerCase('tr');
+function illeriEmbedded(){ return Object.keys(TR_ILILCE).sort((a,b)=>a.localeCompare(b,'tr')); }
+
+// il <select> doldur (embedded, anında/çevrimdışı)
+function ilDoldur(sel, secili, onChange){
+  sel.innerHTML = `<option value="">— İl seç —</option>` + illeriEmbedded().map(n=>`<option ${n===secili?'selected':''}>${esc(n)}</option>`).join('');
+  sel.onchange=()=>{ if(onChange) onChange(sel.value); };
+}
+function ilceDoldur(ilName, sel, secili){
+  if(!ilName){ sel.innerHTML=`<option value="">— Önce il —</option>`; return; }
+  const arr=(TR_ILILCE[ilName]||[]).slice().sort((a,b)=>a.localeCompare(b,'tr'));
+  sel.innerHTML = `<option value="">— İlçe seç —</option>` + arr.map(n=>`<option ${n===secili?'selected':''}>${esc(n)}</option>`).join('');
+}
+// mahalle: il/ilçe adını turkiyeapi id'lerine çözüp çeker (online)
+let _provCache=null;
+async function _ilId(ilName){
+  if(!_provCache){ _provCache = await apiGet(`${TR_API}/provinces?fields=id,name&limit=100`); }
+  const q=trLower(ilName)==='afyonkarahisar'?'afyonkarahisar':trLower(ilName);
+  const p=_provCache.find(x=>trLower(x.name)===q); return p?p.id:null;
+}
+async function _ilceId(ilId, ilceName){
+  const ds=await apiGet(`${TR_API}/provinces/${ilId}/districts?fields=id,name`);
+  const q=trLower(ilceName);
+  let d=ds.find(x=>trLower(x.name)===q);
+  if(!d){ // eski ad eşleşmezse merkez/benzeri dene
+    d=ds.find(x=>trLower(x.name).startsWith(q.slice(0,4)));
+  }
+  return d?d.id:null;
+}
+async function mahalleGetirByName(ilName, ilceName){
+  const ilId=await _ilId(ilName); if(!ilId) throw new Error('İl eşleşmedi');
+  const ilceId=await _ilceId(ilId, ilceName); if(!ilceId) throw new Error('İlçe eşleşmedi');
+  const mh=await apiGet(`${TR_API}/districts/${ilceId}/neighborhoods?fields=id,name&sort=name&limit=3000`);
+  return mh.map(x=>x.name);
+}
+
+/* ---------- ŞUBE ---------- */
+function cizSubeler(){
+  const box=$('#subeList'); if(!box) return;
+  const subeler=S().subeler||[];
+  box.innerHTML = subeler.length? subeler.map(s=>`<div class="keyhealth"><span style="flex:1">🏢 <b>${esc(s.ad)}</b> <span class="muted">${esc([s.il,s.ilce].filter(Boolean).join(' / '))}</span></span><button class="xbtn" data-subedel="${s.id}" style="width:28px;height:28px">✕</button></div>`).join('') : '<div class="muted" style="font-size:.83rem">Şube eklenmedi.</div>';
+  $$('[data-subedel]').forEach(b=>b.onclick=()=>{ S().subeler=S().subeler.filter(x=>x.id!==b.dataset.subedel); save(); cizSubeler(); });
+}
+function subeModal(id, onSave){
+  const s = id ? (S().subeler.find(x=>x.id===id)) : {id:uid(), ad:'', il:'', ilce:''};
+  const body=`
+    <div class="field"><label>Şube / merkez adı *</label><input id="sbAd" value="${esc(s.ad)}" placeholder="Örn. Merkez Şube"></div>
+    <div class="two">
+      <div class="field"><label>İl</label><select id="sbIl"><option value="">—</option></select></div>
+      <div class="field"><label>İlçe</label><select id="sbIlce"><option value="">— Önce il —</option></select></div>
+    </div>
+    <button class="btn block" id="sbKaydet">💾 Kaydet</button>`;
+  modal(id?'Şubeyi düzenle':'Yeni şube', body, (close)=>{
+    ilDoldur($('#sbIl'), s.il, (ilName)=>ilceDoldur(ilName,$('#sbIlce'),''));
+    if(s.il) ilceDoldur(s.il,$('#sbIlce'),s.ilce);
+    $('#sbKaydet').onclick=()=>{
+      const ad=$('#sbAd').value.trim(); if(!ad){ toast('Ad zorunlu','warn'); return; }
+      const rec={id:s.id, ad, il:$('#sbIl').value, ilce:$('#sbIlce').value};
+      S().subeler=S().subeler||[]; const i=S().subeler.findIndex(x=>x.id===s.id);
+      if(i>=0) S().subeler[i]=rec; else S().subeler.push(rec);
+      save(); close(); if(onSave) onSave(); toast('Şube kaydedildi ✓','ok');
+    };
+  });
+}
+
+/* ---------- SERVİS ROTASI (il/ilçe/mahalle) ---------- */
+function cizRotalar(){
+  const box=$('#rotaList'); if(!box) return;
+  const rotalar=S().servisDetay||[];
+  box.innerHTML = rotalar.length? rotalar.map((r,i)=>`<div class="keyhealth" style="align-items:flex-start"><div style="flex:1"><b>🚌 ${esc(r.ad)}</b> <span class="muted">${esc([r.il,r.ilce].filter(Boolean).join(' / '))}</span><div class="muted" style="font-size:.75rem;margin-top:2px">${(r.mahalleler||[]).length} mahalle${(r.mahalleler||[]).length?': '+esc((r.mahalleler||[]).slice(0,4).join(', '))+((r.mahalleler||[]).length>4?'…':''):''}</div></div><button class="xbtn" data-rotadel="${i}" style="width:28px;height:28px">✕</button></div>`).join('') : '<div class="muted" style="font-size:.83rem">Adresli rota yok.</div>';
+  $$('[data-rotadel]').forEach(b=>b.onclick=()=>{ S().servisDetay.splice(+b.dataset.rotadel,1); senkServisAdlari(); save(); cizRotalar(); });
+}
+function senkServisAdlari(){
+  const rotaAdlar=(S().servisDetay||[]).map(r=>r.ad);
+  const mevcut=S().servisler||[];
+  // rota olmayan (elle) adları koru, rota adlarını ekle
+  const elle = mevcut.filter(n=> !rotaAdlarEski.includes(n));
+  S().servisler=[...new Set([...rotaAdlar, ...elle])];
+  if(S().servisler.length===0) S().servisler=['Servis Yok'];
+  rotaAdlarEski = rotaAdlar.slice();
+}
+let rotaAdlarEski = [];
+function servisRotaModal(id, onSave){
+  const r = {ad:'', il:'', ilce:'', mahalleler:[]};
+  const body=`
+    <div class="field"><label>Rota adı *</label><input id="rtAd" placeholder="Örn. Kuzey Hattı"></div>
+    <div class="two">
+      <div class="field"><label>İl</label><select id="rtIl"><option value="">—</option></select></div>
+      <div class="field"><label>İlçe</label><select id="rtIlce"><option value="">— Önce il —</option></select></div>
+    </div>
+    <div class="row" style="justify-content:space-between;margin-bottom:6px">
+      <label style="font-weight:700;font-size:.82rem;color:var(--pine-2)">Mahalleler</label>
+      <div class="row" style="gap:6px"><button class="btn ghost sm" id="rtTumu" disabled>Tümünü seç</button><button class="btn ghost sm" id="rtHic" disabled>Temizle</button></div>
+    </div>
+    <div id="rtMahBox" class="card pad" style="max-height:34vh;overflow-y:auto;box-shadow:none"><div class="muted" style="font-size:.83rem">İl ve ilçe seçince mahalleler gelir. (İnternet yoksa aşağıdan elle ekleyin.)</div></div>
+    <div class="row" style="margin-top:8px"><input id="rtElle" placeholder="Elle mahalle ekle" style="flex:1;padding:9px;border:1.5px solid var(--line);border-radius:10px"><button class="btn ghost sm" id="rtElleBtn">Ekle</button></div>
+    <button class="btn block" id="rtKaydet" style="margin-top:12px">💾 Rotayı kaydet</button>`;
+  modal('Adresli servis rotası', body, (close)=>{
+    let secMah = new Set();
+    let sonMahListe = [];
+    const cizMah=()=>{
+      const box=$('#rtMahBox');
+      if(sonMahListe.length===0 && secMah.size===0){ return; }
+      const hepsi=[...new Set([...sonMahListe, ...secMah])];
+      box.innerHTML = hepsi.map(m=>`<label style="display:flex;gap:8px;align-items:center;padding:5px 2px;cursor:pointer"><input type="checkbox" class="mahchk" value="${esc(m)}" ${secMah.has(m)?'checked':''} style="width:18px;height:18px"> ${esc(m)}</label>`).join('');
+      $$('.mahchk',box).forEach(chk=>chk.onchange=()=>{ if(chk.checked) secMah.add(chk.value); else secMah.delete(chk.value); });
+    };
+    ilDoldur($('#rtIl'), '', (ilName)=>{ ilceDoldur(ilName,$('#rtIlce'),''); sonMahListe=[]; secMah.clear(); cizMah(); });
+    $('#rtIlce').onchange=async ()=>{
+      const ilName=$('#rtIl').value, ilceName=$('#rtIlce').value;
+      if(!ilceName) return;
+      $('#rtMahBox').innerHTML=`<div class="loadmsg"><span class="spinner"></span> ${esc(ilceName)} mahalleleri getiriliyor…</div>`;
+      try{ const mh=await mahalleGetirByName(ilName, ilceName); sonMahListe=mh; $('#rtTumu').disabled=false; $('#rtHic').disabled=false; cizMah(); if(!$('#rtAd').value) $('#rtAd').value=ilceName+' Hattı'; }
+      catch(e){ $('#rtMahBox').innerHTML=`<div class="muted" style="font-size:.83rem">Mahalleler çekilemedi (${esc(e.message||'internet?')}). Aşağıdan elle ekleyebilirsiniz.</div>`; }
+    };
+    $('#rtTumu').onclick=()=>{ sonMahListe.forEach(m=>secMah.add(m)); cizMah(); };
+    $('#rtHic').onclick=()=>{ secMah.clear(); cizMah(); };
+    $('#rtElleBtn').onclick=()=>{ const v=$('#rtElle').value.trim(); if(v){ secMah.add(v); sonMahListe.unshift(v); $('#rtElle').value=''; cizMah(); } };
+    $('#rtKaydet').onclick=()=>{
+      const ad=$('#rtAd').value.trim(); if(!ad){ toast('Rota adı zorunlu','warn'); return; }
+      const rec={ad, il:$('#rtIl').value, ilce:$('#rtIlce').value, mahalleler:[...secMah]};
+      S().servisDetay=S().servisDetay||[];
+      rotaAdlarEski=(S().servisDetay).map(x=>x.ad);
+      S().servisDetay.push(rec);
+      senkServisAdlari(); save(); close(); if(onSave) onSave();
+      toast(`Rota eklendi (${rec.mahalleler.length} mahalle) ✓`,'ok');
+    };
+  });
+}
+
+/* ---------- SERVİS ÇİZELGESİ (bugünküleri servise göre grupla) ---------- */
+function servisCizelgesi(){
+  const iso=GDATE, plan=planOf(iso);
+  if(plan.length===0){ toast('Bu güne plan yok','warn'); return; }
+  const grup={};
+  plan.forEach(e=>{ const s=ogrById(e.studentId); if(!s) return; const k=s.servis||'Belirsiz'; (grup[k]=grup[k]||[]).push({e,s}); });
+  const html=`<div id="cizelgeSheet" style="background:#fff;color:#111;padding:4px">
+    <div style="text-align:center;font-weight:800;color:var(--pine);border-bottom:2px solid var(--pine);padding-bottom:6px;margin-bottom:8px">Servis Çizelgesi — ${insanTarih(iso)}</div>
+    ${Object.entries(grup).sort().map(([serv,arr])=>`
+      <div style="margin-bottom:12px"><div style="font-weight:800;background:var(--pine-lite);color:var(--pine);padding:6px 10px;border-radius:8px">🚌 ${esc(serv)} — ${arr.length} kişi</div>
+      <table style="width:100%;border-collapse:collapse;font-size:.82rem;margin-top:4px">
+        ${arr.sort((a,b)=>(a.e.saat||'').localeCompare(b.e.saat||'')).map(({e,s})=>`<tr><td style="padding:4px;border-bottom:1px solid #eee;width:60px">${e.saat||''}</td><td style="padding:4px;border-bottom:1px solid #eee">${esc(s.ad)}</td><td style="padding:4px;border-bottom:1px solid #eee;color:#666">${e.durum==='geldi'?'✓':e.durum==='gelmedi'?'✗':'○'} ${e.tur==='grup'?'Grup':'Bireysel'}</td></tr>`).join('')}
+      </table></div>`).join('')}
+  </div>
+  <div class="ai-toolbar"><button class="btn sm" id="czPng">📷 Görsel</button><button class="btn sm" id="czPdf">📄 PDF</button></div>`;
+  modal('Servis çizelgesi', html, ()=>{
+    $('#czPng').onclick=()=>window.ZIRVE_gorselPaylas({el:$('#cizelgeSheet'),baslik:`Servis-${iso}`});
+    $('#czPdf').onclick=()=>window.ZIRVE_pdfPaylas({el:$('#cizelgeSheet'),baslik:`Servis-${iso}`});
+  });
+}
+
+/* ---------- ANAHTAR KOPYALA / YAPIŞTIR (ZİRVE ring taşıma) ---------- */
+function keyKopyala(){
+  const ks=(S().keys||[]).map(k=>k.key).filter(Boolean);
+  if(!ks.length){ toast('Kopyalanacak anahtar yok','warn'); return; }
+  const metin = 'const GOMULU_ANAHTARLAR = [\n' + ks.map(k=>`  '${k}',`).join('\n') + '\n];';
+  navigator.clipboard.writeText(metin).then(()=>toast(`${ks.length} anahtar panoya kopyalandı ✓`,'ok'),()=>toast('Kopyalanamadı','err'));
+}
+function keyIceAktar(){
+  const body=`<div class="field"><label>Anahtarları yapıştırın</label><textarea id="iceMetin" style="min-height:120px" placeholder="AIza... (her satıra bir tane ya da dizi olarak yapıştırın)"></textarea></div>
+    <button class="btn block" id="iceBtn">📥 Ekle</button>`;
+  modal('Anahtarları içe aktar', body, (close)=>{
+    $('#iceBtn').onclick=()=>{
+      const raw=$('#iceMetin').value;
+      const bulunan=(raw.match(/AIza[0-9A-Za-z_\-]{20,}/g)||[]);
+      if(!bulunan.length){ toast('Geçerli anahtar bulunamadı','warn'); return; }
+      S().keys=S().keys||[]; const mevcut=new Set(S().keys.map(k=>k.key));
+      let n=0; bulunan.forEach(k=>{ if(!mevcut.has(k)){ S().keys.push({key:k,durum:'gray'}); n++; } });
+      MODEL_CACHE=null; save(); close(); toast(`${n} yeni anahtar eklendi ✓`,'ok');
+      if($('#keyList')) settingsModal(); // paneli tazele
+    };
+  });
+}
+
+/* ---------- TELAFİ (raporlarda kullanılmak üzere) ---------- */
+function telafiGerekenler(ay){
+  const out=[];
+  aktifOgr().forEach(s=>{
+    let gelmedi=0;
+    for(const iso in DB.plans){ if(ayKey(iso)!==ay) continue; DB.plans[iso].forEach(e=>{ if(e.studentId===s.id && e.durum==='gelmedi') gelmedi++; }); }
+    if(gelmedi>0) out.push({s, gelmedi});
+  });
+  return out.sort((a,b)=>b.gelmedi-a.gelmedi);
+}
+/* ============================================================
+   app5 — Veli haftalık ders programı & otomatik plana uygulama
+   ============================================================ */
+function isoOf(d){ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+function haftaGunleri(iso){
+  const d=isoToDate(iso), dow=d.getDay();
+  const pzt=new Date(d); pzt.setDate(d.getDate()-((dow+6)%7)); // haftanın Pazartesi'si
+  const arr=[]; for(let i=0;i<7;i++){ const x=new Date(pzt); x.setDate(pzt.getDate()+i); arr.push(isoOf(x)); }
+  return arr;
+}
+const ONAY_ETIKET = { beklemede:'⏳ Onay bekliyor', onaylandi:'✅ Veli onayladı', degisiklik:'✏️ Değişiklik istendi' };
+const ONAY_CHIP = { beklemede:'', onaylandi:'aktif', degisiklik:'askida' };
+
+function programMetni(s){
+  const st=S();
+  const satir = (s.program||[]).slice().sort((a,b)=>a.gun-b.gun||(a.saat||'').localeCompare(b.saat||''))
+    .map(p=>{ const u=uzmById(p.uzmanId); const bit=saatEkle(p.saat,p.dk||40);
+      return `• ${GUN_ADI[p.gun]} ${p.saat||''}${bit?'–'+bit:''} — ${p.tur==='grup'?'Grup':'Bireysel'} — ${u?u.ad+' ('+u.brans+')':'(uzman atanmadı)'}`; }).join('\n');
+  return `Sayın ${s.veli||'velimiz'},\n\n${s.ad} için haftalık ders programı:\n${satir||'(ders eklenmedi)'}\n\nProgramı onaylıyorsanız lütfen "ONAYLIYORUM" yazın; değişiklik gerekiyorsa gün/saat belirtin.\n\n${st.kurumAdi||''}`.trim();
+}
+
+function programModal(studentId){
+  const s = ogrById(studentId); if(!s) return;
+  if(!s.program) s.program=[];
+  if(!s.veliOnay) s.veliOnay='beklemede';
+  const uzmOpt = uid2 => `<option value="">— uzman —</option>`+DB.uzmanlar.map(u=>`<option value="${u.id}" ${u.id===uid2?'selected':''}>${esc(u.ad)} (${esc(u.brans)})</option>`).join('');
+  const satirlar = () => (s.program||[]).map((p,i)=>`
+    <div class="scard" style="box-shadow:none;flex-wrap:wrap">
+      <div class="info"><div class="meta" style="gap:6px">
+        <select class="pg" data-i="${i}" data-k="gun">${GUN_ADI.map((g,gi)=>`<option value="${gi}" ${gi===p.gun?'selected':''}>${g}</option>`).join('')}</select>
+        <input class="pg" data-i="${i}" data-k="saat" type="time" value="${p.saat||'10:00'}" style="width:96px">
+        <select class="pg" data-i="${i}" data-k="dk"><option value="40" ${(p.dk||40)==40?'selected':''}>40dk</option><option value="80" ${p.dk==80?'selected':''}>80dk</option></select>
+        <select class="pg" data-i="${i}" data-k="tur"><option value="bireysel" ${p.tur!=='grup'?'selected':''}>Bireysel</option><option value="grup" ${p.tur==='grup'?'selected':''}>Grup</option></select>
+        <select class="pg" data-i="${i}" data-k="uzmanId">${uzmOpt(p.uzmanId)}</select>
+      </div></div>
+      <button class="xbtn" data-pgdel="${i}" style="width:32px;height:32px">🗑️</button>
+    </div>`).join('');
+  const body=`
+    <div class="row" style="justify-content:space-between;margin-bottom:8px">
+      <div class="row"><div class="avatar">${s.foto?`<img src="${s.foto}">`:bas(s.ad)}</div><b>${esc(s.ad)}</b></div>
+      <span class="chip ${ONAY_CHIP[s.veliOnay]||''}">${ONAY_ETIKET[s.veliOnay]}</span>
+    </div>
+    <div class="two">
+      <div class="field"><label>Veli adı</label><input id="pgVeli" value="${esc(s.veli||'')}" placeholder="Veli adı"></div>
+      <div class="field"><label>Veli telefonu</label><input id="pgTel" value="${esc(s.telefon||'')}" placeholder="05.."></div>
+    </div>
+    <div class="section-title" style="margin:8px 2px"><span class="k">🗓️</span> Haftalık dersler</div>
+    <div id="pgList" class="slist">${satirlar()||''}</div>
+    <button class="btn ghost sm block" id="pgEkle" style="margin-top:8px">➕ Ders satırı ekle</button>
+
+    <div class="section-title" style="margin:14px 2px 8px"><span class="k">📨</span> Veliye gönder & onay</div>
+    <div class="note-box" style="margin-bottom:10px;white-space:pre-wrap;font-size:.82rem" id="pgOnizleme">${esc(programMetni(s))}</div>
+    <div class="row">
+      <button class="btn amber sm" id="pgWa">🟢 WhatsApp ile gönder</button>
+      <button class="btn ghost sm" id="pgKopya">📋 Kopyala</button>
+      <button class="btn ghost sm" id="pgPng">📷 Görsel</button>
+      <button class="btn ghost sm" id="pgPdf">📄 PDF</button>
+    </div>
+    <div class="section-title" style="margin:14px 2px 8px"><span class="k">✔️</span> Velinin dönüşü</div>
+    <div class="row" style="gap:6px">
+      <button class="fbtn onaybtn ${s.veliOnay==='beklemede'?'on':''}" data-onay="beklemede">⏳ Bekliyor</button>
+      <button class="fbtn onaybtn ${s.veliOnay==='onaylandi'?'on':''}" data-onay="onaylandi">✅ Onayladı</button>
+      <button class="fbtn onaybtn ${s.veliOnay==='degisiklik'?'on':''}" data-onay="degisiklik">✏️ Değişiklik</button>
+    </div>
+    <div id="pgUygulaWrap" style="margin-top:12px"></div>
+  `;
+  modal('Veli ders programı', body, (close)=>{
+    const yenile=()=>{ save(); const o=$('#pgOnizleme'); if(o) o.textContent=programMetni(s); onayAlaniCiz(); };
+    function bindSatir(){
+      $$('.pg').forEach(el=>el.onchange=()=>{ const i=+el.dataset.i,k=el.dataset.k; let v=el.value; if(k==='gun'||k==='dk') v=+v; s.program[i][k]=v; yenile(); });
+      $$('[data-pgdel]').forEach(b=>b.onclick=()=>{ s.program.splice(+b.dataset.pgdel,1); $('#pgList').innerHTML=satirlar(); bindSatir(); yenile(); });
+    }
+    bindSatir();
+    $('#pgEkle').onclick=()=>{ s.program.push({id:uid(),gun:1,saat:'10:00',dk:40,tur:s.dersTuru==='grup'?'grup':'bireysel',uzmanId:(DB.uzmanlar[0]||{}).id||''}); $('#pgList').innerHTML=satirlar(); bindSatir(); yenile(); };
+    $('#pgVeli').oninput=()=>{ s.veli=$('#pgVeli').value; yenile(); };
+    $('#pgTel').oninput=()=>{ s.telefon=$('#pgTel').value; yenile(); };
+    $('#pgKopya').onclick=()=>{ navigator.clipboard.writeText(programMetni(s)); toast('Program kopyalandı ✓','ok'); };
+    $('#pgWa').onclick=()=>{
+      const tel=(s.telefon||'').replace(/\D/g,'');
+      const num = tel? (tel.startsWith('90')?tel : tel.startsWith('0')?'9'+tel : '90'+tel) : '';
+      const url = `https://wa.me/${num}?text=${encodeURIComponent(programMetni(s))}`;
+      window.open(url,'_blank');
+    };
+    $('#pgPng').onclick=()=>window.ZIRVE_gorselPaylas({html:mdToHtml(programMetni(s)),baslik:`${s.ad}-Program`});
+    $('#pgPdf').onclick=()=>window.ZIRVE_pdfPaylas({html:mdToHtml(programMetni(s)),baslik:`${s.ad}-Program`});
+    $$('.onaybtn').forEach(b=>b.onclick=()=>{ s.veliOnay=b.dataset.onay; s.veliOnayTarih=bugunISO(); $$('.onaybtn').forEach(x=>x.classList.toggle('on',x===b)); yenile(); if(b.dataset.onay==='onaylandi') toast('Veli onayı işlendi — program haftaya uygulanabilir','ok'); });
+    function onayAlaniCiz(){
+      const w=$('#pgUygulaWrap'); if(!w) return;
+      if(s.veliOnay==='onaylandi' && (s.program||[]).length){
+        const hafta=haftaGunleri(GDATE);
+        w.innerHTML=`<div class="card pad" style="border-left:5px solid var(--ok);background:var(--ok-bg)">
+          <b style="color:#0d6b47">Onaylı program hazır.</b> <span class="muted">Bu haftanın (${insanTarih(hafta[0]).split(',')[0]} – ${insanTarih(hafta[6]).split(',')[0]}) günlük planına ekleyelim mi?</span>
+          <button class="btn block sm" id="pgUygula" style="margin-top:8px">📌 Bu haftanın planına uygula</button></div>`;
+        $('#pgUygula').onclick=()=>{
+          let eklendi=0, atlanan=0;
+          s.program.forEach(p=>{
+            const iso = hafta.find(d=>isoToDate(d).getDay()===p.gun); if(!iso) return;
+            const varMi = planOf(iso).some(x=>x.studentId===s.id && x.saat===p.saat);
+            if(varMi){ atlanan++; return; }
+            planOf(iso).push({id:uid(),studentId:s.id,saat:p.saat,tur:p.tur,dk:p.dk||40,uzmanId:p.uzmanId,durum:'planli',alternatifMi:false,programdan:true});
+            eklendi++;
+          });
+          save(); render(); toast(`${eklendi} ders bu haftaya eklendi${atlanan?` (${atlanan} zaten vardı)`:''} ✓`,'ok'); close();
+        };
+      } else if(s.veliOnay==='degisiklik'){
+        w.innerHTML=`<div class="note-box">✏️ Veli değişiklik istedi. Yukarıdan gün/saat/uzmanı güncelleyip tekrar gönderin.</div>`;
+      } else w.innerHTML='';
+    }
+    onayAlaniCiz();
+  });
+}
+
+/* ---------- Onaylı programları bu haftaya TOPLU uygula ---------- */
+function veliTopluHaftaUygula(){
+  const hafta = haftaGunleri(GDATE);
+  const onayli = aktifOgr().filter(s=> s.veliOnay==='onaylandi' && (s.program||[]).length);
+  if(!onayli.length){ toast('Onaylı program yok','warn'); return; }
+  let eklendi=0, atlanan=0;
+  onayli.forEach(s=>{
+    s.program.forEach(p=>{
+      const iso = hafta.find(d=>isoToDate(d).getDay()===p.gun); if(!iso) return;
+      if(planOf(iso).some(x=>x.studentId===s.id && x.saat===p.saat)){ atlanan++; return; }
+      planOf(iso).push({id:uid(),studentId:s.id,saat:p.saat,tur:p.tur,dk:p.dk||40,uzmanId:p.uzmanId,durum:'planli',alternatifMi:false,programdan:true});
+      eklendi++;
+    });
+  });
+  save(); render();
+  toast(`${onayli.length} onaylı programdan ${eklendi} ders bu haftaya eklendi${atlanan?` (${atlanan} zaten vardı)`:''} ✓`,'ok');
+}
+/* ============================================================
+   app6 — OTOMASYON + akıllı ekstralar
+   ============================================================ */
+
+/* ---- Otomatik: hafta başında onaylı programları plana yükle ---- */
+function otoHaftaKontrol(){
+  if(!S().otoHafta) return;
+  const hafta = haftaGunleri(bugunISO());
+  const bayrak = 'reha_otohafta_'+hafta[0];
+  if(localStorage.getItem(bayrak)) return;      // bu hafta zaten yapıldı
+  const onayli = aktifOgr().filter(s=> s.veliOnay==='onaylandi' && (s.program||[]).length);
+  if(!onayli.length){ localStorage.setItem(bayrak,'1'); return; }
+  let eklendi=0;
+  onayli.forEach(s=> s.program.forEach(p=>{
+    const iso=hafta.find(d=>isoToDate(d).getDay()===p.gun); if(!iso) return;
+    if(planOf(iso).some(x=>x.studentId===s.id && x.saat===p.saat)) return;
+    planOf(iso).push({id:uid(),studentId:s.id,saat:p.saat,tur:p.tur,dk:p.dk||40,uzmanId:p.uzmanId,durum:'planli',alternatifMi:false,programdan:true}); eklendi++;
+  }));
+  localStorage.setItem(bayrak,'1');
+  if(eklendi){ save(); setTimeout(()=>toast(`🤖 Otomatik: ${eklendi} onaylı ders bu haftanın planına yüklendi`,'ok'), 800); }
+}
+
+/* ---- Günlük Plan: ⚡ Otomatik menü ---- */
+function planOtomatikMenu(){
+  const body=`
+    <button class="btn block" id="otoBugun">📅 Bugünü onaylı programlardan doldur</button>
+    <div class="muted" style="font-size:.78rem;margin:6px 2px 12px">${GUN_ADI[isoToDate(GDATE).getDay()]} günü ders programı olan onaylı öğrenciler otomatik plana eklenir.</div>
+    <button class="btn block amber" id="otoAlt">↔ Boş (gelmedi) slotları alternatifle doldur</button>
+    <div class="muted" style="font-size:.78rem;margin:6px 2px 12px">Gelmeyen her öğrencinin yerine en uygun aday otomatik çağrılır.</div>
+    <button class="btn ghost block" id="otoUzman">🧑‍⚕️ Uzman günlük çizelgesi</button>`;
+  modal('⚡ Otomatik işlemler', body, (close)=>{
+    $('#otoBugun').onclick=()=>{ close(); bugunuProgramdanDoldur(); };
+    $('#otoAlt').onclick=()=>{ close(); bosSlotAlternatifDoldur(); };
+    $('#otoUzman').onclick=()=>{ close(); uzmanCizelgesi(); };
+  });
+}
+function bugunuProgramdanDoldur(){
+  const gun=isoToDate(GDATE).getDay();
+  const onayli=aktifOgr().filter(s=> s.veliOnay==='onaylandi' && (s.program||[]).length);
+  let eklendi=0, atlanan=0;
+  onayli.forEach(s=> s.program.filter(p=>p.gun===gun).forEach(p=>{
+    if(planOf(GDATE).some(x=>x.studentId===s.id && x.saat===p.saat)){ atlanan++; return; }
+    planOf(GDATE).push({id:uid(),studentId:s.id,saat:p.saat,tur:p.tur,dk:p.dk||40,uzmanId:p.uzmanId,durum:'planli',alternatifMi:false,programdan:true}); eklendi++;
+  }));
+  save(); render();
+  toast(eklendi?`${eklendi} ders bugüne eklendi${atlanan?` (${atlanan} vardı)`:''} ✓`:'Bugüne uygun onaylı program yok','ok');
+}
+function bosSlotAlternatifDoldur(){
+  const plan=planOf(GDATE);
+  const gelmeyenler=plan.filter(e=>e.durum==='gelmedi');
+  if(!gelmeyenler.length){ toast('Boş (gelmedi) slot yok','warn'); return; }
+  let dolduruldu=0; const kullanilanlar=new Set(plan.map(p=>p.studentId));
+  gelmeyenler.forEach(e=>{
+    const aday=alternatifBul(e).filter(c=>!kullanilanlar.has(c.s.id));
+    if(aday.length){ const c=aday[0]; kullanilanlar.add(c.s.id);
+      plan.push({id:uid(),studentId:c.s.id,saat:e.saat,tur:e.tur,dk:e.dk||40,uzmanId:e.uzmanId,durum:'planli',alternatifMi:true}); dolduruldu++; }
+  });
+  save(); render();
+  toast(dolduruldu?`🤖 ${dolduruldu} boş slota alternatif atandı ✓`:'Uygun alternatif bulunamadı', dolduruldu?'ok':'warn');
+}
+
+/* ---- Çakışma kontrolü (uzman/öğrenci aynı saatte) ---- */
+function cakismaVar(iso, e){
+  const s=ogrById(e.studentId); if(!s) return null;
+  const a1=saatDk(e.saat), a2=a1+(e.dk||40);
+  for(const x of planOf(iso)){
+    if(x.id===e.id) continue;
+    const b1=saatDk(x.saat), b2=b1+(x.dk||40);
+    const kesisir = a1<b2 && b1<a2;
+    if(!kesisir) continue;
+    if(x.studentId===e.studentId) return 'Öğrenci çakışması';
+    if(e.uzmanId && x.uzmanId===e.uzmanId) return 'Uzman çakışması: '+((uzmById(e.uzmanId)||{}).ad||'');
+  }
+  return null;
+}
+function saatDk(hhmm){ const m=(hhmm||'').match(/(\d{1,2}):(\d{2})/); return m? (+m[1])*60+(+m[2]) : 0; }
+
+/* ---- Uzman günlük çizelgesi ---- */
+function uzmanCizelgesi(){
+  const iso=GDATE, plan=planOf(iso);
+  if(plan.length===0){ toast('Bu güne plan yok','warn'); return; }
+  const grup={}; plan.forEach(e=>{ const k=e.uzmanId||'atanmadi'; (grup[k]=grup[k]||[]).push(e); });
+  const html=`<div id="uzCizelge" style="background:#fff;color:#111;padding:4px">
+    <div style="text-align:center;font-weight:800;color:var(--pine);border-bottom:2px solid var(--pine);padding-bottom:6px;margin-bottom:8px">Uzman Günlük Çizelgesi — ${insanTarih(iso)}</div>
+    ${Object.entries(grup).map(([uid2,arr])=>{ const u=uzmById(uid2); return `
+      <div style="margin-bottom:12px"><div style="font-weight:800;background:#efeafd;color:#5b3fb0;padding:6px 10px;border-radius:8px">🧑‍⚕️ ${u?esc(u.ad)+' — '+esc(u.brans):'Uzman atanmadı'} (${arr.length})</div>
+      <table style="width:100%;border-collapse:collapse;font-size:.82rem;margin-top:4px">
+        ${arr.sort((a,b)=>(a.saat||'').localeCompare(b.saat||'')).map(e=>{ const s=ogrById(e.studentId)||{}; return `<tr><td style="padding:4px;border-bottom:1px solid #eee;width:110px">${e.saat||''}–${saatEkle(e.saat,e.dk||40)}</td><td style="padding:4px;border-bottom:1px solid #eee">${esc(s.ad||'')}</td><td style="padding:4px;border-bottom:1px solid #eee;color:#666">${e.tur==='grup'?'Grup':'Bireysel'}</td></tr>`; }).join('')}
+      </table></div>`; }).join('')}
+  </div>
+  <div class="ai-toolbar"><button class="btn sm" id="uzPng">📷 Görsel</button><button class="btn sm" id="uzPdf">📄 PDF</button></div>`;
+  modal('Uzman çizelgesi', html, ()=>{
+    $('#uzPng').onclick=()=>window.ZIRVE_gorselPaylas({el:$('#uzCizelge'),baslik:`Uzman-${iso}`});
+    $('#uzPdf').onclick=()=>window.ZIRVE_pdfPaylas({el:$('#uzCizelge'),baslik:`Uzman-${iso}`});
+  });
+}
+
+/* ---- Toplu veli gönderimi (kuyruk / webhook) ---- */
+function topluVeliGonder(){
+  const bekleyen = aktifOgr().filter(s=> (s.program||[]).length && (s.veliOnay||'beklemede')!=='onaylandi');
+  if(!bekleyen.length){ toast('Onay bekleyen program yok','warn'); return; }
+  const webhook = (S().veliWebhook||'').trim();
+  let i=0;
+  const ciz=()=>{
+    if(i>=bekleyen.length){ $('#tvBody').innerHTML=`<div class="empty"><div class="big">✅</div>${bekleyen.length} veli işlendi.</div>`; return; }
+    const s=bekleyen[i];
+    $('#tvBody').innerHTML=`
+      <div class="row" style="justify-content:space-between;margin-bottom:8px"><b>${i+1}/${bekleyen.length}</b><span class="chip">${esc(s.ad)}</span></div>
+      <div class="note-box" style="white-space:pre-wrap;font-size:.8rem;max-height:34vh;overflow:auto">${esc(programMetni(s))}</div>
+      <div class="row" style="margin-top:10px">
+        <button class="btn amber sm" id="tvWa">🟢 WhatsApp aç</button>
+        ${webhook?`<button class="btn sm" id="tvHook">🤖 Otomatik gönder</button>`:''}
+        <button class="btn ghost sm" id="tvSkip">Atla ▶</button>
+      </div>`;
+    const tel=(s.telefon||'').replace(/\D/g,''); const num=tel?(tel.startsWith('90')?tel:tel.startsWith('0')?'9'+tel:'90'+tel):'';
+    $('#tvWa').onclick=()=>{ window.open(`https://wa.me/${num}?text=${encodeURIComponent(programMetni(s))}`,'_blank'); };
+    const th=$('#tvHook'); if(th) th.onclick=async ()=>{ th.disabled=true; th.textContent='gönderiliyor…'; const ok=await webhookGonder(s); toast(ok?`${s.ad}: gönderildi ✓`:`${s.ad}: gönderilemedi`, ok?'ok':'err'); i++; ciz(); };
+    $('#tvSkip').onclick=()=>{ i++; ciz(); };
+  };
+  const body=`<div class="note-box" style="margin-bottom:10px">${webhook?'🤖 Webhook tanımlı — “Otomatik gönder” ile sisteminiz kendisi iletir. ':''}Sırayla her veliye program gönderin.</div><div id="tvBody"></div>`;
+  modal('📨 Toplu veli gönderimi', body, ()=>ciz());
+}
+async function webhookGonder(s){
+  const url=(S().veliWebhook||'').trim(); if(!url) return false;
+  try{
+    const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+      ogrenci:s.ad, veli:s.veli||'', telefon:s.telefon||'', mesaj:programMetni(s), kurum:S().kurumAdi||'', tarih:bugunISO()
+    })});
+    return r.ok;
+  }catch(e){ return false; }
+}
+
+/* ---- Göz konforu / gece modu (ZİRVE okuma konforu) ---- */
+function gozKonforuKur(){
+  let ov=document.getElementById('gozOverlay');
+  if(!ov){ ov=document.createElement('div'); ov.id='gozOverlay'; ov.style.cssText='position:fixed;inset:0;background:rgba(255,170,50,.10);pointer-events:none;z-index:200;mix-blend-mode:multiply;display:none'; document.body.appendChild(ov); }
+  const acik=localStorage.getItem('reha_goz')==='1';
+  ov.style.display=acik?'block':'none';
+  const k=kontrolKur('goz','🌙','Göz', null, ()=>{
+    const yeni = localStorage.getItem('reha_goz')!=='1';
+    localStorage.setItem('reha_goz', yeni?'1':'0');
+    ov.style.display=yeni?'block':'none';
+    toast(yeni?'Göz konforu açık':'Göz konforu kapalı');
+  });
+}
+/* ============================================================
+   app7 — LİSANS / AKTİVASYON + TANITIM
+   ============================================================ */
+const LIS = {
+  ADMIN_USER: 'baris-usta-2026',
+  ADMIN_PASS_HASH: 'f4d7d1ae24d7dea4352238a2e38f23c78c74290707338cb0d83680b5be7cd41b',
+  SECRET: 'RHA::baris-usta-2026::lisans::9F3A-C7B2-1E88::gizli-anahtar::degistirmeyin',
+  LKEY: 'reha_lisans_v1',
+  SIDKEY: 'reha_siteid'
+};
+async function sha256hex(str){
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+function siteId(){
+  let id = localStorage.getItem(LIS.SIDKEY);
+  if(!id){ id = [...crypto.getRandomValues(new Uint8Array(6))].map(b=>b.toString(16).padStart(2,'0')).join('').toUpperCase(); localStorage.setItem(LIS.SIDKEY, id); }
+  return id; // 12 hex
+}
+const grupla = (s,n=4)=> s.replace(/(.{4})/g,'$1-').replace(/-$/,'');
+function kurulumKodu(){ return 'K-'+grupla(siteId()); }
+async function imzaUret(sid, expField){ return (await sha256hex(sid+'|'+expField+'|'+LIS.SECRET)).slice(0,8).toUpperCase(); }
+async function aktivasyonKoduUret(sid, expField){ // expField: '00000000' süresiz | 'YYYYMMDD'
+  const sig = await imzaUret(sid, expField);
+  return 'RHA-'+grupla(expField+sig);
+}
+function temizKod(k){ return (k||'').toUpperCase().replace(/[^0-9A-Z]/g,'').replace(/^RHA/,''); }
+async function aktivasyonDogrula(sid, girilen){
+  const t = temizKod(girilen);
+  if(t.length<16) return {ok:false, sebep:'Kod eksik/hatalı'};
+  const expField = t.slice(0,8), sig = t.slice(8,16);
+  const beklenen = await imzaUret(sid, expField);
+  if(sig!==beklenen) return {ok:false, sebep:'Kod bu kuruluma ait değil'};
+  if(expField!=='00000000'){
+    const exp = new Date(+expField.slice(0,4), +expField.slice(4,6)-1, +expField.slice(6,8), 23,59,59);
+    if(Date.now()>exp.getTime()) return {ok:false, sebep:'Lisans süresi dolmuş ('+expField.slice(6,8)+'.'+expField.slice(4,6)+'.'+expField.slice(0,4)+')'};
+  }
+  return {ok:true, expField};
+}
+function lisansKaydet(expField){ localStorage.setItem(LIS.LKEY, JSON.stringify({exp:expField, t:Date.now()})); }
+function lisansOku(){ try{ return JSON.parse(localStorage.getItem(LIS.LKEY)||'null'); }catch(e){ return null; } }
+async function lisansGecerli(){
+  const l = lisansOku(); if(!l) return false;
+  const r = await aktivasyonDogrula(siteId(), 'RHA-'+l.exp+ await imzaUret(siteId(), l.exp));
+  return r.ok;
+}
+function lisansGunKalan(){
+  const l=lisansOku(); if(!l||l.exp==='00000000') return null;
+  const exp=new Date(+l.exp.slice(0,4), +l.exp.slice(4,6)-1, +l.exp.slice(6,8),23,59,59);
+  return Math.ceil((exp-Date.now())/86400000);
+}
+
+/* ---------- Müşteri aktivasyon ekranı (tam ekran kilit) ---------- */
+function lisansEkraniGoster(sebep){
+  const eski=$('#lisansOverlay'); if(eski) eski.remove();
+  const kk=kurulumKodu();
+  const ov=document.createElement('div'); ov.id='lisansOverlay';
+  ov.style.cssText='position:fixed;inset:0;z-index:9000;background:var(--grad);overflow-y:auto;display:flex;align-items:flex-start;justify-content:center;padding:24px 14px';
+  ov.innerHTML=`
+    <div style="max-width:560px;width:100%;color:#fff">
+      <div style="text-align:center;margin-bottom:14px">
+        <div style="width:64px;height:64px;border-radius:18px;background:#f2c14e;color:#0e4f52;font-weight:900;font-size:2rem;display:grid;place-items:center;margin:0 auto 10px">R</div>
+        <h1 style="color:#fff;font-size:1.5rem">REHA Planla</h1>
+        <div style="opacity:.85">Rehabilitasyon Planlama Asistanı — Lisanslı Yazılım</div>
+      </div>
+      ${sebep?`<div style="background:#fff3f3;color:#a12b2b;border-radius:12px;padding:11px 14px;margin-bottom:12px;font-size:.88rem">⚠️ ${esc(sebep)}</div>`:''}
+      <div style="background:#fff;color:var(--ink);border-radius:18px;padding:20px;box-shadow:var(--shadow-lg)">
+        <h3 style="margin-bottom:6px">🔐 Etkinleştirme gerekli</h3>
+        <p class="muted" style="font-size:.88rem;margin:0 0 14px">Bu yazılımı kullanmak için aktivasyon kodu gerekir. Aşağıdaki <b>Kurulum Kodu</b>'nu yetkiliye (satıcıya) iletin, size özel kodu girin.</p>
+        <label style="font-weight:700;font-size:.82rem;color:var(--pine-2)">Kurulum Kodunuz</label>
+        <div class="row" style="margin:5px 0 14px">
+          <code id="lisKK" style="flex:1;background:var(--pine-lite);color:var(--pine);padding:11px 13px;border-radius:11px;font-weight:800;font-size:1.05rem;letter-spacing:1px;text-align:center">${kk}</code>
+          <button class="btn ghost sm" id="lisKKcopy">📋</button>
+        </div>
+        <label style="font-weight:700;font-size:.82rem;color:var(--pine-2)">Aktivasyon Kodu</label>
+        <input id="lisInput" placeholder="RHA-XXXX-XXXX-XXXX-XXXX" style="width:100%;padding:12px 13px;border:1.5px solid var(--line);border-radius:11px;margin:5px 0 12px;text-align:center;letter-spacing:1px;text-transform:uppercase">
+        <button class="btn block" id="lisAktive">🔓 Etkinleştir</button>
+        <div class="row" style="justify-content:space-between;margin-top:12px">
+          <button class="btn ghost sm" id="lisWa">🟢 Kodu WhatsApp'tan iste</button>
+          <button class="btn ghost sm" id="lisSatici">🔑 Satıcı girişi</button>
+        </div>
+      </div>
+      <div style="margin-top:16px;background:rgba(255,255,255,.12);border-radius:16px;padding:16px">
+        <div style="font-weight:800;margin-bottom:8px">Bu yazılım ne yapar?</div>
+        <div id="lisTanitim" style="font-size:.85rem;line-height:1.7;opacity:.95"></div>
+      </div>
+    </div>`;
+  document.body.appendChild(ov);
+  $('#lisTanitim').innerHTML = TANITIM_MADDELER.map(m=>`• ${m}`).join('<br>');
+  $('#lisKKcopy').onclick=()=>{ navigator.clipboard.writeText(kk); toast('Kurulum kodu kopyalandı ✓','ok'); };
+  $('#lisWa').onclick=()=>{ const msg=`Merhaba, REHA Planla aktivasyon kodu istiyorum.\nKurulum Kodum: ${kk}`; window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`,'_blank'); };
+  $('#lisSatici').onclick=saticiGiris;
+  $('#lisAktive').onclick=async ()=>{
+    const r = await aktivasyonDogrula(siteId(), $('#lisInput').value);
+    if(r.ok){ lisansKaydet(r.expField); ov.remove(); toast('Etkinleştirildi 🎉','ok'); baslatUygulama(true); }
+    else toast(r.sebep||'Geçersiz kod','err');
+  };
+}
+
+/* ---------- Satıcı (Barış) girişi + üretici panel ---------- */
+function saticiGiris(){
+  const body=`
+    <div class="field"><label>Kullanıcı adı</label><input id="sgUser" placeholder="kullanıcı adı" autocomplete="off"></div>
+    <div class="field"><label>Şifre</label><input id="sgPass" type="password" placeholder="şifre"></div>
+    <button class="btn block" id="sgGir">🔑 Giriş</button>`;
+  modal('Satıcı / Yönetici girişi', body, (close)=>{
+    $('#sgGir').onclick=async ()=>{
+      const u=$('#sgUser').value.trim(), p=$('#sgPass').value;
+      const pOverride = localStorage.getItem('reha_admin_pass_hash');
+      const hash = await sha256hex(p);
+      if(u===LIS.ADMIN_USER && (hash===LIS.ADMIN_PASS_HASH || hash===pOverride)){ close(); saticiPanel(); }
+      else toast('Kullanıcı adı veya şifre hatalı','err');
+    };
+  });
+}
+function saticiPanel(){
+  const body=`
+    <div class="note-box" style="margin-bottom:12px">🔑 <b>Lisans Üretici.</b> Müşterinizin <b>Kurulum Kodu</b>'nu yapıştırın, süreyi seçin, çıkan <b>Aktivasyon Kodu</b>'nu müşteriye gönderin.</div>
+    <div class="field"><label>Müşteri Kurulum Kodu</label><input id="upKK" placeholder="K-XXXX-XXXX-XXXX" style="text-transform:uppercase"></div>
+    <div class="field"><label>Lisans süresi</label>
+      <select id="upSure"><option value="suresiz">♾️ Süresiz</option><option value="12">1 yıl (12 ay)</option><option value="6">6 ay</option><option value="3">3 ay</option><option value="1">1 ay (deneme)</option><option value="ozel">Özel tarih…</option></select></div>
+    <div class="field hidden" id="upOzelWrap"><label>Bitiş tarihi</label><input type="date" id="upOzel"></div>
+    <button class="btn block" id="upUret">⚙️ Aktivasyon kodu üret</button>
+    <div id="upSonuc" style="margin-top:14px"></div>
+    <div class="hr"></div>
+    <button class="btn ghost block sm" id="upBuCihaz">✅ Bu cihazı süresiz etkinleştir (kendi kullanımın için)</button>
+    <button class="btn ghost block sm" id="upSifre" style="margin-top:8px">🔒 Yönetici şifresini değiştir</button>
+    <button class="btn ghost block sm" id="upWebhookInfo" style="margin-top:8px">🌐 Gerçek sunucu doğrulaması nasıl eklenir?</button>`;
+  modal('🔑 Lisans Yöneticisi', body, ()=>{
+    $('#upSure').onchange=()=>{ $('#upOzelWrap').classList.toggle('hidden', $('#upSure').value!=='ozel'); };
+    $('#upUret').onclick=async ()=>{
+      const sid = temizKod($('#upKK').value).replace(/^K/,'');
+      if(sid.length<12){ toast('Kurulum kodu hatalı','warn'); return; }
+      const v=$('#upSure').value; let expField='00000000';
+      if(v!=='suresiz'){
+        let d;
+        if(v==='ozel'){ if(!$('#upOzel').value){ toast('Tarih seçin','warn'); return; } d=new Date($('#upOzel').value); }
+        else { d=new Date(); d.setMonth(d.getMonth()+ +v); }
+        expField = `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`;
+      }
+      const kod = await aktivasyonKoduUret(sid.slice(0,12), expField);
+      $('#upSonuc').innerHTML=`<div class="card pad" style="border-left:5px solid var(--ok);background:var(--ok-bg)">
+        <div class="muted" style="font-size:.8rem">Müşteriye gönderilecek aktivasyon kodu:</div>
+        <code style="display:block;font-size:1.15rem;font-weight:900;color:#0d6b47;margin:6px 0;letter-spacing:1px">${kod}</code>
+        <div class="muted" style="font-size:.78rem">${v==='suresiz'?'Süresiz lisans':'Bitiş: '+expField.slice(6,8)+'.'+expField.slice(4,6)+'.'+expField.slice(0,4)}</div>
+        <button class="btn sm block" id="upKopya" style="margin-top:8px">📋 Kodu kopyala</button>
+        <button class="btn ghost sm block" id="upWa" style="margin-top:6px">🟢 WhatsApp'tan gönder</button>
+      </div>`;
+      $('#upKopya').onclick=()=>{ navigator.clipboard.writeText(kod); toast('Kopyalandı ✓','ok'); };
+      $('#upWa').onclick=()=>{ window.open(`https://wa.me/?text=${encodeURIComponent('REHA Planla aktivasyon kodunuz: '+kod)}`,'_blank'); };
+    };
+    $('#upBuCihaz').onclick=()=>{ lisansKaydet('00000000'); toast('Bu cihaz süresiz etkinleştirildi ✓','ok'); const ov=$('#lisansOverlay'); if(ov){ ov.remove(); baslatUygulama(true); } };
+    $('#upSifre').onclick=()=>{
+      const np=prompt('Yeni yönetici şifresi:'); if(!np) return;
+      sha256hex(np).then(h=>{ localStorage.setItem('reha_admin_pass_hash',h); toast('Şifre güncellendi (bu cihazda) ✓','ok'); });
+    };
+    $('#upWebhookInfo').onclick=()=>{
+      modal('Gerçek sunucu doğrulaması', `<div class="ai-answer" style="font-size:.9rem">
+        <p>Client-side kilit, dosyayı bir arkadaşına yollayıp bedava kullanmayı <b>engeller</b> (kod olmadan açılmaz). Ancak kaynak kodu görebilen ileri düzey biri teorik olarak aşabilir.</p>
+        <p><b>%100 koruma için:</b> Aktivasyonu bir sunucudan doğrulatın:</p>
+        <ul>
+          <li>Ücretsiz bir <b>Google Apps Script</b> web app ya da <b>Make/Zapier/n8n</b> webhook'u kurun.</li>
+          <li>Uygulama, kurulum kodunu oraya gönderip “geçerli mi?” diye sorsun; siz onaylı kodları orada tutun.</li>
+          <li>İstersen bir sonraki turda bunu birlikte ekleyelim; hazır yapı buna uygun.</li>
+        </ul>
+        <p class="muted">Ayrıca dosyayı satarken JS'i “minify + obfuscate” edersen okunması iyice zorlaşır.</p></div>`);
+    };
+  });
+}
+
+/* ---------- TAM TANITIM ---------- */
+const TANITIM_MADDELER = [
+  '👥 <b>Öğrenci havuzu</b>: fotoğraf, oturum (sabahçı/öğlenci), servis, tanı, ders türü, aylık ders hakkı, BKDS belge takibi',
+  '🧑‍⚕️ <b>Uzman havuzu</b>: dil-konuşma terapisti, ergoterapist, fizyoterapist, özel eğitim öğretmeni, psikolog',
+  '🗓️ <b>Günlük plan</b>: yüz okundu ✅ / gelmedi 🚫 takibi, bitiş saati ve tek ders bekleme göstergesi',
+  '↔ <b>Alternatif Beyni</b>: gelmeyenin yerine uygun öğrenciyi anında bulur (AI destekli sıralama)',
+  '⚡ <b>Otomatik doldur</b>: boş slotları alternatifle, günü onaylı programlarla otomatik doldurur',
+  '👪 <b>Otomatik grup</b>: tanıya/servise göre grupları saniyede oluşturur (AI ad+hedef yazar)',
+  '📝 <b>Ders planı (AI)</b>: tanı/uzmanlık dalına göre BEP-uyumlu plan üretir',
+  '🗓️ <b>Veli programı</b>: gün+saat+hoca yazılır, WhatsApp/PNG/PDF ile gönderilir; onaylanınca otomatik plana düşer',
+  '🚌 <b>Servis rotaları</b>: 81 il + 957 ilçe gömülü, mahalleler otomatik; servis & uzman çizelgesi çıktısı',
+  '🖨️ <b>Yoklama listesi</b>: fotoğraflı, imzaya hazır → PNG/PDF/yazdır',
+  '📊 <b>Raporlar</b>: kalan ders hakkı, doluluk, servis dağılımı, telafi önerileri',
+  '⛔ <b>Çakışma kontrolü</b>, 🌙 göz konforu, 🔑 lisanslı satış, 🔒 KVKK: tüm veri cihazda yerel'
+];
+function tanitimAc(){
+  const body=`
+    <p class="muted">REHA Planla, rehabilitasyon merkezinde müdür / müdür yardımcısı / sekreterya ve servis işlerinin <b>angaryasını</b> azaltmak için tasarlandı. İşte yapabildikleri:</p>
+    <div class="grid" style="gap:8px;margin-top:10px">
+      ${TANITIM_MADDELER.map(m=>`<div class="card pad" style="padding:11px 13px;font-size:.9rem">${m}</div>`).join('')}
+    </div>
+    <div class="kvkk" style="margin-top:12px">🔒 Tüm veriler (fotoğraflar dâhil) yalnızca bu cihazda saklanır. AI özellikleri için ⚙️ Ayarlar'dan ücretsiz Gemini anahtarı girin.</div>
+    <div class="note-box" style="margin-top:10px">Başlamak için: ⚙️ Ayarlar → kurum bilgisi & saat/tatil → 👥 öğrenci/uzman ekle → 🗓️ günlük plan. Dilerseniz Panel’den <b>“Örnek verilerle dene”</b>.</div>
+  `;
+  modal('REHA Planla — Neler yapabilir?', body);
+}
 
 </script>
 </body>
