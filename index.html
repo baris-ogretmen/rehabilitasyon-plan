@@ -617,7 +617,10 @@ function viewOgrenciler(){
       <button class="fbtn on" id="tabOgr">👥 Öğrenciler ${DB.students.length}</button>
       <button class="fbtn" id="tabUzm">🧑‍⚕️ Uzmanlar ${DB.uzmanlar.length}</button>
     </div>
-    <button class="btn sm" id="ogrEkle">➕ Öğrenci</button>
+    <div class="row" style="gap:6px">
+      <button class="btn ghost sm" id="ogrToplu">📥 Toplu</button>
+      <button class="btn sm" id="ogrEkle">➕ Öğrenci</button>
+    </div>
   </div>
   <div class="searchbar" style="margin:12px 0"><span>🔍</span><input id="ogrArama" placeholder="Ad, servis veya tanı ara..." value="${esc(ogrSearch)}"></div>
   <div class="filters">
@@ -660,7 +663,10 @@ function viewUzmanlar(){
       <button class="fbtn" id="tabOgr">👥 Öğrenciler ${DB.students.length}</button>
       <button class="fbtn on" id="tabUzm">🧑‍⚕️ Uzmanlar ${DB.uzmanlar.length}</button>
     </div>
-    <button class="btn sm" id="uzmEkle">➕ Uzman</button>
+    <div class="row" style="gap:6px">
+      <button class="btn ghost sm" id="uzmToplu">📥 Toplu</button>
+      <button class="btn sm" id="uzmEkle">➕ Uzman</button>
+    </div>
   </div>
   <div class="note-box" style="margin:12px 0">Dil-konuşma terapisti, ergoterapist, fizyoterapist, özel eğitim öğretmeni, psikolog… Uzmanlar plan ve gruplarda görevlendirilir.</div>
   ${DB.uzmanlar.length===0
@@ -829,6 +835,8 @@ function bindView(){
   const tu=$('#tabUzm'); if(tu) tu.onclick=()=>{ogrTab='uzm';render();};
   ['ogrEkle','ogrEkle2'].forEach(id=>{const el=$('#'+id);if(el)el.onclick=()=>ogrModal();});
   ['uzmEkle','uzmEkle2'].forEach(id=>{const el=$('#'+id);if(el)el.onclick=()=>uzmModal();});
+  const ot=$('#ogrToplu'); if(ot) ot.onclick=()=>topluIceAktar('ogr');
+  const ut=$('#uzmToplu'); if(ut) ut.onclick=()=>topluIceAktar('uzm');
   const oa=$('#ogrArama'); if(oa){ oa.oninput=()=>{ogrSearch=oa.value; const p=oa.selectionStart; render(); const n=$('#ogrArama'); if(n){n.focus();n.setSelectionRange(p,p);} }; }
   $$('[data-of]').forEach(b=>b.onclick=()=>{ogrFilter=b.dataset.of;render();});
   $$('[data-ogr]').forEach(c=>c.onclick=()=>ogrModal(c.dataset.ogr));
@@ -1337,6 +1345,7 @@ async function hataMetni(r){
     if(r.status===503) return 'Model geçici meşgul (503). Tekrar deneyin.';
     if(r.status===404) return 'Model bulunamadı (404).';
     if(r.status===400) return 'Geçersiz istek: '+m;
+    if(r.status===401) return 'Anahtar geçersiz/yetkisiz (401). Bu anahtarı silin, yeni bir tane alın.';
     if(r.status===403) return 'İzin yok / anahtar geçersiz (403).';
     return `Hata ${r.status}: ${m}`;
   }catch(e){ return `Ağ/sunucu hatası (${r.status}).`; }
@@ -1348,6 +1357,7 @@ window.ZIRVE.anahtarTest = async function(key){
     const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${key}`);
     if(r.ok) return {ok:true,durum:'green',mesaj:'Çalışıyor'};
     if(r.status===429) return {ok:false,durum:'yellow',mesaj:'Geçerli ama kota dolu'};
+    if(r.status===401) return {ok:false,durum:'red',mesaj:'Geçersiz/yetkisiz anahtar (401) — silin'};
     if(r.status===400||r.status===403) return {ok:false,durum:'red',mesaj:'Geçersiz anahtar / izin yok'};
     return {ok:false,durum:'red',mesaj:'Hata '+r.status};
   }catch(e){ return {ok:false,durum:'red',mesaj:'Ağ hatası'}; }
@@ -1722,15 +1732,15 @@ document.addEventListener('DOMContentLoaded', girisKontrol);
    servis çizelgesi, anahtar taşıma, telafi
    ============================================================ */
 const TR_API = 'https://api.turkiyeapi.dev/v2';
-async function apiGet(url){
-  const c = new AbortController(); const t=setTimeout(()=>c.abort(), 12000);
-  try{ const r=await fetch(url,{signal:c.signal}); clearTimeout(t); if(!r.ok) throw new Error('http '+r.status); const j=await r.json(); return j.data||j; }
+async function apiGetFull(url){
+  const c=new AbortController(); const t=setTimeout(()=>c.abort(),12000);
+  try{ const r=await fetch(url,{signal:c.signal}); clearTimeout(t); if(!r.ok) throw new Error('http '+r.status); return await r.json(); }
   catch(e){ clearTimeout(t); throw e; }
 }
+async function apiGet(url){ const j=await apiGetFull(url); return j.data||j; }
 const trLower = s => (s||'').toLocaleLowerCase('tr');
 function illeriEmbedded(){ return Object.keys(TR_ILILCE).sort((a,b)=>a.localeCompare(b,'tr')); }
 
-// il <select> doldur (embedded, anında/çevrimdışı)
 function ilDoldur(sel, secili, onChange){
   sel.innerHTML = `<option value="">— İl seç —</option>` + illeriEmbedded().map(n=>`<option ${n===secili?'selected':''}>${esc(n)}</option>`).join('');
   sel.onchange=()=>{ if(onChange) onChange(sel.value); };
@@ -1740,27 +1750,37 @@ function ilceDoldur(ilName, sel, secili){
   const arr=(TR_ILILCE[ilName]||[]).slice().sort((a,b)=>a.localeCompare(b,'tr'));
   sel.innerHTML = `<option value="">— İlçe seç —</option>` + arr.map(n=>`<option ${n===secili?'selected':''}>${esc(n)}</option>`).join('');
 }
-// mahalle: il/ilçe adını turkiyeapi id'lerine çözüp çeker (online)
-let _provCache=null;
+// il adı → API id (name filtresi)
 async function _ilId(ilName){
-  if(!_provCache){ _provCache = await apiGet(`${TR_API}/provinces?fields=id,name&limit=100`); }
-  const q=trLower(ilName)==='afyonkarahisar'?'afyonkarahisar':trLower(ilName);
-  const p=_provCache.find(x=>trLower(x.name)===q); return p?p.id:null;
+  const q = ilName==='Afyon'?'Afyonkarahisar':ilName;
+  const d = await apiGet(`${TR_API}/provinces?name=${encodeURIComponent(q)}&fields=id,name&limit=10`);
+  const m=(d||[]).find(x=>trLower(x.name)===trLower(q)) || (d||[])[0];
+  return m?m.id:null;
 }
+// il id + ilçe adı → ilçe id (provinceId filtresi — nested DEĞİL)
 async function _ilceId(ilId, ilceName){
-  const ds=await apiGet(`${TR_API}/provinces/${ilId}/districts?fields=id,name`);
+  const d = await apiGet(`${TR_API}/districts?provinceId=${ilId}&fields=id,name&limit=100`);
   const q=trLower(ilceName);
-  let d=ds.find(x=>trLower(x.name)===q);
-  if(!d){ // eski ad eşleşmezse merkez/benzeri dene
-    d=ds.find(x=>trLower(x.name).startsWith(q.slice(0,4)));
+  const m = (d||[]).find(x=>trLower(x.name)===q) || (d||[]).find(x=>trLower(x.name).startsWith(q.slice(0,4)));
+  return m?m.id:null;
+}
+// mahalleler — SAYFALI (limit 100), büyük limit 400 vermesin
+async function tumMahalleler(ilceId){
+  let out=[], offset=0, total=Infinity, guard=0;
+  while(offset<total && guard<50){
+    const j = await apiGetFull(`${TR_API}/districts/${ilceId}/neighborhoods?fields=name&limit=100&offset=${offset}`);
+    const d = j.data||[]; out=out.concat(d.map(x=>x.name));
+    total = (j.meta && typeof j.meta.total==='number') ? j.meta.total : out.length;
+    offset+=100; guard++; if(d.length<100) break;
   }
-  return d?d.id:null;
+  return [...new Set(out)];
 }
 async function mahalleGetirByName(ilName, ilceName){
-  const ilId=await _ilId(ilName); if(!ilId) throw new Error('İl eşleşmedi');
-  const ilceId=await _ilceId(ilId, ilceName); if(!ilceId) throw new Error('İlçe eşleşmedi');
-  const mh=await apiGet(`${TR_API}/districts/${ilceId}/neighborhoods?fields=id,name&sort=name&limit=3000`);
-  return mh.map(x=>x.name);
+  const ilId=await _ilId(ilName); if(!ilId) throw new Error('il eşleşmedi');
+  const ilceId=await _ilceId(ilId, ilceName); if(!ilceId) throw new Error('ilçe eşleşmedi');
+  const mh=await tumMahalleler(ilceId);
+  if(!mh.length) throw new Error('mahalle bulunamadı');
+  return mh;
 }
 
 /* ---------- ŞUBE ---------- */
@@ -2512,6 +2532,181 @@ function kurulumSihirbazi(){
   }
   let kapat;
   kapat = modal('Kurulum Sihirbazı', `<div id="wizBody"></div>`, (close)=>{ kapat=close; ciz(); });
+}
+/* ============================================================
+   app9 — TOPLU İÇE AKTARMA (öğrenci & uzman)
+   ============================================================ */
+
+/* ---------- CSV/TSV ayrıştırıcı (ayraç sezme + tırnak) ---------- */
+function ayracSez(text){
+  const satir=(text.split(/\r?\n/).find(l=>l.trim())||'');
+  const say=ch=>(satir.match(new RegExp('\\'+ch,'g'))||[]).length;
+  const t=say('\t'), n=say(';'), c=say(',');
+  if(t>=n && t>=c && t>0) return '\t';
+  if(n>=c && n>0) return ';';
+  return ',';
+}
+function csvParse(text){
+  const sep=ayracSez(text); const rows=[]; let row=[], cur='', q=false;
+  for(let i=0;i<text.length;i++){ const ch=text[i];
+    if(q){ if(ch==='"'){ if(text[i+1]==='"'){cur+='"';i++;} else q=false; } else cur+=ch; }
+    else { if(ch==='"') q=true; else if(ch===sep){ row.push(cur); cur=''; } else if(ch==='\n'){ row.push(cur); rows.push(row); row=[]; cur=''; } else if(ch==='\r'){} else cur+=ch; }
+  }
+  if(cur!==''||row.length){ row.push(cur); rows.push(row); }
+  return rows.filter(r=>r.some(c=>(c||'').trim()!==''));
+}
+
+/* ---------- Değer normalleştiriciler ---------- */
+const normOturum = v=>{ const s=trLower(v); if(s.includes('sabah'))return'sabah'; if(s.includes('öğle')||s.includes('ogle')||s.includes('öğlen')||s.includes('oglen'))return'oglen'; if(s.includes('fark'))return'farketmez'; return'sabah'; };
+const normTur = v=>{ const s=trLower(v); const g=s.includes('grup'), b=s.includes('birey'); if((g&&b)||s.includes('ikisi'))return'ikisi'; if(g)return'grup'; return'bireysel'; };
+const normDurum = v=>{ const s=trLower(v); if(s.includes('mezun'))return'mezun'; if(s.includes('ask')||s.includes('pasif'))return'askida'; return'aktif'; };
+const GUN_MAP = {pazartesi:1,pzt:1,pt:1,salı:2,sali:2,sal:2,çarşamba:3,carsamba:3,çar:3,car:3,perşembe:4,persembe:4,per:4,cuma:5,cum:5,cumartesi:6,cmt:6,cts:6,pazar:0,paz:0};
+function normGunler(v){ if(!v)return[1,2,3,4,5]; const out=new Set();
+  String(v).split(/[,\/;\s]+/).forEach(p=>{ const t=trLower(p.trim()); if(t==='')return; if(/^\d$/.test(t)){out.add(+t);return;} if(GUN_MAP[t]!==undefined)out.add(GUN_MAP[t]); for(const k in GUN_MAP){ if(t.startsWith(k.slice(0,3))){out.add(GUN_MAP[k]);break;} } });
+  return out.size?[...out].sort():[1,2,3,4,5];
+}
+
+/* ---------- Başlık eşleme ---------- */
+const OGR_ALIAS = { ad:['ad','adsoyad','adısoyadı','isim','öğrenci','ogrenci','adsoyadı','isimsoyisim','name'],
+  oturum:['oturum','seans','vardiya'], servis:['servis','güzergah','guzergah','servisgüzergahı','hat'],
+  dersTuru:['derstürü','dersturu','tür','tur','tip','type'], tani:['tanı','tani','yetersizlik','tanıalanı','engel'],
+  aylikBireysel:['bireysel','aylıkbireysel','bireyselhak','bireyselsaat','bireyselders'],
+  aylikGrup:['grup','aylıkgrup','gruphak','grupsaat','grupders'],
+  durum:['durum','statü','statu','status'], veli:['veli','veliadı','veliad'], telefon:['telefon','tel','gsm','cep','telefonno'] };
+const UZM_ALIAS = { ad:['ad','adsoyad','isim','uzman','öğretmen','ogretmen','name'], brans:['branş','brans','uzmanlık','uzmanlik','ünvan','unvan','görev','gorev','bölüm','bolum'],
+  oturum:['oturum','seans','vardiya'], gunler:['gün','gun','günler','gunler','çalışmagünleri','calismagunleri','days'] };
+const sadeBaslik = s => trLower(s).replace(/[\s_./-]/g,'');
+function basliklariEsle(headerRow, alias){
+  const idx={}; headerRow.forEach((h,i)=>{ const hs=sadeBaslik(h); for(const key in alias){ if(alias[key].some(a=>hs===a||hs.includes(a)||a.includes(hs)&&hs.length>2)){ if(idx[key]===undefined) idx[key]=i; } } });
+  return idx;
+}
+function basliksatiriMi(row, alias){ const idx=basliklariEsle(row,alias); return Object.keys(idx).length>=2; }
+
+/* ---------- Satırları kayıda çevir ---------- */
+function ogrKayitlariUret(rows){
+  if(!rows.length) return [];
+  const st=S(); const varsayilanServis=st.servisler[0]||'', varsayilanTani=st.tanilar[0]||'';
+  let idx, veri;
+  if(basliksatiriMi(rows[0],OGR_ALIAS)){ idx=basliklariEsle(rows[0],OGR_ALIAS); veri=rows.slice(1); }
+  else if(rows[0].length===1){ idx={ad:0}; veri=rows; } // tek sütun: sadece isim
+  else { idx={ad:0,oturum:1,servis:2,dersTuru:3,tani:4,aylikBireysel:5,aylikGrup:6,durum:7,veli:8,telefon:9}; veri=rows; }
+  const al=(r,k)=> idx[k]!==undefined ? (r[idx[k]]||'').trim() : '';
+  return veri.map(r=>{ const ad=al(r,'ad'); if(!ad) return null;
+    return { id:uid(), ad, foto:null,
+      oturum: idx.oturum!==undefined?normOturum(al(r,'oturum')):'sabah',
+      servis: al(r,'servis')||varsayilanServis,
+      dersTuru: idx.dersTuru!==undefined?normTur(al(r,'dersTuru')):'bireysel',
+      tani: al(r,'tani')||varsayilanTani,
+      bransIhtiyac: st.branslar[0]||'',
+      aylikBireysel: parseInt(al(r,'aylikBireysel'))||0,
+      aylikGrup: parseInt(al(r,'aylikGrup'))||0,
+      durum: idx.durum!==undefined?normDurum(al(r,'durum')):'aktif',
+      veli: al(r,'veli'), telefon: al(r,'telefon'), notlar:'', createdAt:Date.now() };
+  }).filter(Boolean);
+}
+function uzmKayitlariUret(rows){
+  if(!rows.length) return [];
+  const st=S(); let idx,veri;
+  if(basliksatiriMi(rows[0],UZM_ALIAS)){ idx=basliklariEsle(rows[0],UZM_ALIAS); veri=rows.slice(1); }
+  else if(rows[0].length===1){ idx={ad:0}; veri=rows; }
+  else { idx={ad:0,brans:1,oturum:2,gunler:3}; veri=rows; }
+  const al=(r,k)=> idx[k]!==undefined ? (r[idx[k]]||'').trim() : '';
+  return veri.map(r=>{ const ad=al(r,'ad'); if(!ad) return null;
+    return { id:uid(), ad, foto:null, brans: al(r,'brans')||st.branslar[0]||'Özel Eğitim Öğretmeni',
+      oturum: idx.oturum!==undefined?(trLower(al(r,'oturum')).includes('sabah')?'sabah':trLower(al(r,'oturum')).includes('öğle')||trLower(al(r,'oturum')).includes('ogle')?'oglen':'tam'):'tam',
+      gunler: normGunler(al(r,'gunler')) };
+  }).filter(Boolean);
+}
+
+/* ---------- Toplu içe aktarma modalı ---------- */
+function topluIceAktar(tur){
+  const isOgr = tur!=='uzm';
+  let sekme='yapistir', kayitlar=[];
+  const basliklar = isOgr
+    ? 'Ad Soyad;Oturum;Servis;Ders Türü;Tanı;Aylık Bireysel;Aylık Grup;Durum;Veli;Telefon'
+    : 'Ad Soyad;Branş;Oturum;Günler';
+  const ornek = isOgr
+    ? 'Ahmet Yılmaz;Sabahçı;1. Servis;Bireysel;Otizm (OSB);8;4;Aktif;Ayşe Yılmaz;05551112233\nElif Kaya;Öğlenci;2. Servis;Grup;Zihinsel Yetersizlik;0;8;Aktif;;'
+    : 'Ayşe Demir;Dil ve Konuşma Terapisti;Tam gün;Pzt,Çar,Cum\nMehmet Ak;Ergoterapist;Sabahçı;1,2,3,4,5';
+
+  function onizle(){
+    const box=$('#tiOnizle'); if(!box) return;
+    if(!kayitlar.length){ box.innerHTML=`<div class="muted" style="font-size:.85rem">Henüz kayıt yok. Yukarıdan veri girin.</div>`; $('#tiAktar').disabled=true; return; }
+    $('#tiAktar').disabled=false; $('#tiAktar').textContent=`✅ ${kayitlar.length} kaydı içe aktar`;
+    const ilk=kayitlar.slice(0,5);
+    box.innerHTML=`<div class="muted" style="font-size:.82rem;margin-bottom:6px"><b>${kayitlar.length}</b> kayıt hazır. İlk ${ilk.length}:</div>
+      <div class="slist">${ilk.map(k=>`<div class="scard" style="box-shadow:none;padding:8px"><div class="avatar" style="width:34px;height:34px;font-size:.75rem">${bas(k.ad)}</div><div class="info"><div class="nm" style="font-size:.9rem">${esc(k.ad)}</div><div class="meta">${isOgr?`<span class="chip ${k.oturum}">${k.oturum==='sabah'?'Sabah':k.oturum==='oglen'?'Öğlen':'-'}</span><span class="chip servis">${esc(k.servis||'')}</span><span class="chip ${k.dersTuru==='grup'?'grup':''}">${k.dersTuru}</span>`:`<span class="chip grup">${esc(k.brans)}</span><span class="chip servis">${(k.gunler||[]).map(g=>GUN_ADI[g].slice(0,3)).join(',')}</span>`}</div></div></div>`).join('')}</div>`;
+  }
+  function ayristir(text){ const rows=csvParse(text); kayitlar = isOgr?ogrKayitlariUret(rows):uzmKayitlariUret(rows); onizle(); }
+
+  const body=`
+    <div class="filters" style="margin-bottom:12px">
+      <button class="fbtn on" data-ti="yapistir">📋 Yapıştır</button>
+      <button class="fbtn" data-ti="dosya">📄 Excel/CSV</button>
+      <button class="fbtn" data-ti="ai">✨ AI ile ayrıştır</button>
+      <button class="fbtn" data-ti="sablon">⬇️ Şablon</button>
+    </div>
+    <div id="tiPane"></div>
+    <div class="hr"></div>
+    <div id="tiOnizle"></div>
+    <label class="pill-toggle" style="margin-top:8px"><span>Aynı isimleri atla (mükerrer önleme)</span><input type="checkbox" id="tiDedup" checked style="width:20px;height:20px"></label>
+    <button class="btn block" id="tiAktar" style="margin-top:12px" disabled>İçe aktar</button>`;
+
+  modal(isOgr?'📥 Toplu Öğrenci Ekle':'📥 Toplu Uzman Ekle', body, (close)=>{
+    function pane(){
+      const p=$('#tiPane');
+      if(sekme==='yapistir'){
+        p.innerHTML=`<div class="note-box" style="margin-bottom:8px;font-size:.82rem">Excel'den kopyalayıp yapıştırın (sütunlar korunur) ya da <b>her satıra bir ad</b> yazın. Başlık satırı varsa otomatik tanınır.</div>
+          <textarea id="tiText" style="width:100%;min-height:150px;font-family:monospace;font-size:.85rem" placeholder="${isOgr?'Ahmet Yılmaz\nElif Kaya\n...\n(veya Excel’den sütunlu yapıştırın)':'Ayşe Demir\nMehmet Ak\n...'}"></textarea>`;
+        $('#tiText').oninput=()=>ayristir($('#tiText').value);
+      } else if(sekme==='dosya'){
+        p.innerHTML=`<div class="note-box" style="margin-bottom:8px;font-size:.82rem">.xlsx, .xls veya .csv dosyası seçin. İlk sayfa okunur, başlıklar otomatik eşlenir.</div>
+          <input type="file" id="tiFile" accept=".xlsx,.xls,.csv" style="width:100%;padding:12px;border:1.5px dashed var(--line);border-radius:11px;background:var(--card-2)">
+          <div id="tiFileMsg" class="muted" style="font-size:.82rem;margin-top:8px"></div>`;
+        $('#tiFile').onchange=async (e)=>{ const f=e.target.files[0]; if(!f)return;
+          const msg=$('#tiFileMsg'); msg.textContent='Okunuyor…';
+          try{
+            if(/\.csv$/i.test(f.name)){ const txt=await f.text(); ayristir(txt); msg.textContent=f.name+' okundu.'; }
+            else { await cdnYukle('https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js');
+              const buf=await f.arrayBuffer(); const wb=XLSX.read(buf,{type:'array'});
+              const ws=wb.Sheets[wb.SheetNames[0]]; const rows=XLSX.utils.sheet_to_json(ws,{header:1,blankrows:false}).map(r=>r.map(c=>c==null?'':String(c)));
+              kayitlar = isOgr?ogrKayitlariUret(rows):uzmKayitlariUret(rows); onizle(); msg.textContent=f.name+' okundu.'; }
+          }catch(err){ msg.textContent='Dosya okunamadı: '+(err.message||''); }
+        };
+      } else if(sekme==='ai'){
+        p.innerHTML=`<div class="note-box" style="margin-bottom:8px;font-size:.82rem">Dağınık/karışık listeyi yapıştırın; yapay zekâ düzenli kayıtlara çevirsin. (Gemini anahtarı gerekir, en fazla ~200 satır.)</div>
+          <textarea id="tiAiText" style="width:100%;min-height:130px" placeholder="Örn: Ahmet sabahçı otizm bireysel 8 saat, Elif öğlenci zihinsel grup..."></textarea>
+          <button class="btn block sm" id="tiAiBtn" style="margin-top:8px">✨ AI ile düzenle</button>
+          <div id="tiAiMsg" class="muted" style="font-size:.82rem;margin-top:6px"></div>`;
+        $('#tiAiBtn').onclick=async ()=>{
+          if(!keysVar()){ toast('AI için Ayarlar’dan anahtar girin','warn'); return; }
+          const t=$('#tiAiText').value.trim(); if(!t){toast('Metin girin','warn');return;}
+          $('#tiAiMsg').innerHTML='<span class="spinner"></span> düzenleniyor…';
+          const alanlar = isOgr?'ad, oturum(sabah/oglen), servis, dersTuru(bireysel/grup/ikisi), tani, aylikBireysel(sayı), aylikGrup(sayı), durum(aktif/mezun/askida), veli, telefon':'ad, brans, oturum(tam/sabah/oglen), gunler(1-7 dizi, Pzt=1)';
+          const prompt=`Aşağıdaki serbest metni ${isOgr?'öğrenci':'uzman'} kayıtlarına çevir. SADECE geçerli JSON dizisi döndür, başka hiçbir şey yazma. Her nesne alanları: ${alanlar}. Bilinmeyen alanları boş/0 bırak.\n\nMETİN:\n${t}`;
+          try{ let c=await generateText(prompt,{kisa:true}); c=c.replace(/```json|```/g,'').trim(); const arr=JSON.parse(c);
+            const rows=[Object.keys(arr[0])].concat(arr.map(o=>Object.values(o).map(x=>x==null?'':String(x))));
+            kayitlar = isOgr?ogrKayitlariUret(rows):uzmKayitlariUret(rows); onizle(); $('#tiAiMsg').textContent=kayitlar.length+' kayıt çıkarıldı.';
+          }catch(e){ $('#tiAiMsg').textContent='AI çıktısı okunamadı, tekrar deneyin.'; }
+        };
+      } else {
+        p.innerHTML=`<div class="note-box" style="font-size:.82rem;margin-bottom:8px">Şablonu indirip Excel'de doldurun, sonra <b>Excel/CSV</b> sekmesinden yükleyin.</div>
+          <div class="card pad" style="font-family:monospace;font-size:.78rem;white-space:pre-wrap;overflow:auto">${esc(basliklar)}\n${esc(ornek)}</div>
+          <button class="btn block sm" id="tiSablon" style="margin-top:8px">⬇️ CSV şablonu indir</button>`;
+        $('#tiSablon').onclick=()=>{ const csv=basliklar.replace(/;/g,';')+'\n'+ornek; const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=isOgr?'ogrenci-sablon.csv':'uzman-sablon.csv'; a.click(); toast('Şablon indirildi ✓','ok'); };
+      }
+    }
+    $$('[data-ti]').forEach(b=>b.onclick=()=>{ sekme=b.dataset.ti; $$('[data-ti]').forEach(x=>x.classList.toggle('on',x===b)); pane(); });
+    pane(); onizle();
+    $('#tiAktar').onclick=()=>{
+      if(!kayitlar.length) return;
+      let ekle=kayitlar, atlanan=0;
+      if($('#tiDedup').checked){ const mevcut=new Set((isOgr?DB.students:DB.uzmanlar).map(x=>trLower(x.ad))); ekle=kayitlar.filter(k=>{ if(mevcut.has(trLower(k.ad))){atlanan++;return false;} mevcut.add(trLower(k.ad)); return true; }); }
+      if(isOgr) DB.students.push(...ekle); else DB.uzmanlar.push(...ekle);
+      save(); close(); render();
+      toast(`${ekle.length} ${isOgr?'öğrenci':'uzman'} eklendi${atlanan?` (${atlanan} mükerrer atlandı)`:''} ✓`,'ok');
+    };
+  });
 }
 
 </script>
