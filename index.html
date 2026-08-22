@@ -286,7 +286,8 @@ function curKey(){ return (typeof demoAktif==='function' && demoAktif()) ? DEMO_
 const defaultSettings = () => ({
   kurumAdi: '', personel: '', il: '', ilce: '',
   baslangic: '09:00', dersDk: 40, molaDk: 10, gunlukSlot: 8, beklemeDk: 50,
-  otoHafta: true, veliWebhook: '',
+  otoHafta: true, veliWebhook: '', seansMinDk: 50, aylikBireyselMax: 8, aylikGrupMax: 4,
+  bkdsUrl: '', bkdsOto: false, bkdsOtoDk: 5,
   tatilGunleri: [0],                 // JS getDay: 0=Pazar
   subeler: [],                       // [{id,ad,il,ilce}]
   servisDetay: [],                   // [{ad,il,ilce,mahalleler:[]}]
@@ -406,6 +407,8 @@ function viewPanel(){
   const rvBekle = randevuBekleyen();
   const eksikBelge = aktifOgr().filter(s=> s.onamVar===false || s.biyoFotoVar===false).length;
   const uyariSatir = [];
+  const bkRisk = bkdsRisk(iso);
+  if(bkRisk>0) uyariSatir.push(`<div class="uw"><span>🪪 <b>${bkRisk}</b> kayıtta BKDS ödeme riski (çıkış/süre eksik)</span><button class="btn danger sm" id="bkdsGit" style="color:#fff">Aç</button></div>`);
   if(eksikBelge>0) uyariSatir.push(`<div class="uw"><span>🪪 <b>${eksikBelge}</b> öğrencide BKDS belgesi eksik</span><button class="btn danger sm" data-goto-eksik="1" style="color:#fff">Gör</button></div>`);
   if(rvBekle>0) uyariSatir.push(`<div class="uw"><span>📅 <b>${rvBekle}</b> veli randevu talebi bekliyor</span><button class="btn amber sm" id="rvGit">Aç</button></div>`);
   if(veliBekle>0) uyariSatir.push(`<div class="uw"><span>🗓️ <b>${veliBekle}</b> veli onayı bekliyor</span><div class="row" style="gap:5px"><button class="btn ghost sm" id="veliToplu">Gönder</button><button class="btn sm" data-goto-veli="1">Gör</button></div></div>`);
@@ -432,6 +435,7 @@ function viewPanel(){
     <button class="card pad qa" data-goto="ogrenciler" style="text-align:left"><div style="font-size:1.6rem">➕</div><b>Öğrenci / uzman ekle</b><div class="muted" style="font-size:.82rem">Havuzu büyüt</div></button>
     <button class="card pad qa" data-goto="dersplani" style="text-align:left"><div style="font-size:1.6rem">✨</div><b>Otomatik grup + ders planı</b><div class="muted" style="font-size:.82rem">Tanıya göre AI ile</div></button>
     <button class="card pad qa" id="aiAsistanHizli" style="text-align:left;background:linear-gradient(135deg,#0e4f52,#1c8a80);color:#fff;border:none"><div style="font-size:1.6rem">✨</div><b>AI Asistan</b><div style="font-size:.82rem;opacity:.9">Bugünü özetle · öneri al</div></button>
+    <button class="card pad qa" id="bkdsHizli" style="text-align:left;border:2px solid var(--pine-lite)"><div style="font-size:1.6rem">🪪</div><b>BKDS Devam</b><div class="muted" style="font-size:.82rem">Giriş/çıkış · süre · seans</div></button>
     <button class="card pad qa" id="randevuHizli" style="text-align:left"><div style="font-size:1.6rem">📅</div><b>Veli Randevuları</b><div class="muted" style="font-size:.82rem">MEB randevu sistemi</div></button>
     <button class="card pad qa" id="gridHizli" style="text-align:left"><div style="font-size:1.6rem">📋</div><b>Günlük Çizelge</b><div class="muted" style="font-size:.82rem">Saat × uzman · öğretmenlere</div></button>
     <button class="card pad qa" id="yoklamaHizli" style="text-align:left"><div style="font-size:1.6rem">🖨️</div><b>Yoklama listesi</b><div class="muted" style="font-size:.82rem">Bugünkü liste → PNG/PDF</div></button>
@@ -480,6 +484,7 @@ function viewPlan(){
       <button class="btn ghost sm" id="planEkle">➕ Öğrenci</button>
       <button class="btn ghost sm" id="cizelgeBtn">🚌 Servis</button>
       <button class="btn ghost sm" id="gridBtn">📋 Çizelge</button>
+      <button class="btn ghost sm" id="bkdsBtn">🪪 BKDS</button>
       <button class="btn sm" id="yoklamaBtn">🖨️ Yoklama</button>
     </div>
   </div>
@@ -610,6 +615,7 @@ function viewOgrenciler(){
       <button class="fbtn" id="tabUzm">🧑‍⚕️ Uzmanlar ${DB.uzmanlar.length}</button>
     </div>
     <div class="row" style="gap:6px">
+      <button class="btn ghost sm" id="ogrFoto">📷 Foto</button>
       <button class="btn ghost sm" id="ogrToplu">📥 Toplu</button>
       <button class="btn sm" id="ogrEkle">➕ Öğrenci</button>
     </div>
@@ -656,6 +662,7 @@ function viewUzmanlar(){
       <button class="fbtn on" id="tabUzm">🧑‍⚕️ Uzmanlar ${DB.uzmanlar.length}</button>
     </div>
     <div class="row" style="gap:6px">
+      <button class="btn ghost sm" id="uzmFoto">📷 Foto</button>
       <button class="btn ghost sm" id="uzmToplu">📥 Toplu</button>
       <button class="btn sm" id="uzmEkle">➕ Uzman</button>
     </div>
@@ -815,6 +822,9 @@ function bindView(){
   const yb=$('#yoklamaBtn'); if(yb) yb.onclick=yoklamaAc;
   const cz=$('#cizelgeBtn'); if(cz) cz.onclick=servisCizelgesi;
   const grb=$('#gridBtn'); if(grb) grb.onclick=gridCizelge;
+  const bk=$('#bkdsBtn'); if(bk) bk.onclick=bkdsModal;
+  const bkh=$('#bkdsHizli'); if(bkh) bkh.onclick=bkdsModal;
+  const bkg=$('#bkdsGit'); if(bkg) bkg.onclick=bkdsModal;
   const ob=$('#otoBtn'); if(ob) ob.onclick=planOtomatikMenu;
   const rh=$('#randevuHizli'); if(rh) rh.onclick=randevuModal;
   const gh=$('#gridHizli'); if(gh) gh.onclick=gridCizelge;
@@ -833,6 +843,8 @@ function bindView(){
   ['uzmEkle','uzmEkle2'].forEach(id=>{const el=$('#'+id);if(el)el.onclick=()=>uzmModal();});
   const ot=$('#ogrToplu'); if(ot) ot.onclick=()=>topluIceAktar('ogr');
   const ut=$('#uzmToplu'); if(ut) ut.onclick=()=>topluIceAktar('uzm');
+  const of=$('#ogrFoto'); if(of) of.onclick=()=>topluFotoModal('ogr');
+  const uf=$('#uzmFoto'); if(uf) uf.onclick=()=>topluFotoModal('uzm');
   const oa=$('#ogrArama'); if(oa){ oa.oninput=()=>{ogrSearch=oa.value; const p=oa.selectionStart; render(); const n=$('#ogrArama'); if(n){n.focus();n.setSelectionRange(p,p);} }; }
   $$('[data-of]').forEach(b=>b.onclick=()=>{ogrFilter=b.dataset.of;render();});
   $$('[data-ogr]').forEach(c=>c.onclick=()=>ogrModal(c.dataset.ogr));
@@ -932,6 +944,7 @@ function ogrModal(id){
       <input type="file" accept="image/*" id="fotoInput" class="hidden">
     </div>
     <div class="field"><label>Ad Soyad *</label><input id="oAd" value="${esc(s.ad)}" placeholder="Öğrenci adı"></div>
+    <div class="field"><label>T.C. Kimlik No <span class="muted" style="font-weight:400">(BKDS eşleştirme için, opsiyonel)</span></label><input id="oTC" value="${esc(s.tc||'')}" placeholder="11 haneli" inputmode="numeric" maxlength="11"></div>
     <div class="two">
       <div class="field"><label>Oturum</label><select id="oOturum"><option value="sabah" ${s.oturum==='sabah'?'selected':''}>🌅 Sabahçı</option><option value="oglen" ${s.oturum==='oglen'?'selected':''}>🌆 Öğlenci</option><option value="farketmez" ${s.oturum==='farketmez'?'selected':''}>Farketmez</option></select></div>
       <div class="field"><label>Durum</label><select id="oDurum"><option value="aktif" ${s.durum==='aktif'?'selected':''}>Aktif</option><option value="mezun" ${s.durum==='mezun'?'selected':''}>Mezun</option><option value="askida" ${s.durum==='askida'?'selected':''}>Askıda</option></select></div>
@@ -974,7 +987,7 @@ function ogrModal(id){
     $('#oBiyo').onclick=()=>$('#oBiyo').classList.toggle('on');
     $('#oKaydet').onclick=()=>{
       const ad=$('#oAd').value.trim(); if(!ad){ toast('Ad Soyad zorunlu','warn'); return; }
-      const rec={ id:s.id, ad, foto, oturum:$('#oOturum').value, servis:$('#oServis').value, dersTuru:$('#oTur').value,
+      const rec={ id:s.id, ad, foto, tc:($('#oTC').value||'').replace(/\D/g,''), oturum:$('#oOturum').value, servis:$('#oServis').value, dersTuru:$('#oTur').value,
         tani:$('#oTani').value, bransIhtiyac:$('#oBrans').value, aylikBireysel:+$('#oHakB').value||0, aylikGrup:+$('#oHakG').value||0,
         durum:$('#oDurum').value, veli:$('#oVeli').value.trim(), telefon:$('#oTel').value.trim(), notlar:$('#oNot').value.trim(),
         onamVar:$('#oOnam').classList.contains('on'), biyoFotoVar:$('#oBiyo').classList.contains('on'),
@@ -1451,6 +1464,8 @@ function settingsModal(){
         <div class="field"><label>Slotlar arası ara (dk)</label><input type="number" id="stMola" value="${st.molaDk}" min="0" max="60"></div>
       </div>
       <div class="field"><label>Tek ders bekleme süresi (dk)</label><input type="number" id="stBekle" value="${st.beklemeDk}" min="0" max="120"></div>
+      <div class="field"><label>BKDS: 1 seans için gereken min. süre (dk)</label><input type="number" id="stSeansMin" value="${st.seansMinDk||50}" min="10" max="90"></div>
+      <div class="muted" style="font-size:.75rem">BKDS'de öğrenci bu süreden az kalırsa seans sayılmaz (ödeme alınamaz).</div>
       <div class="field"><label>Tatil günleri (kuruma göre)</label><div class="filters" style="flex-wrap:wrap">${gunChk}</div></div>
       <div class="muted" style="font-size:.78rem">40 dk ders + ara ayarı, tek saatlik gelen öğrencinin bekleme mantığını yansıtır.</div>
     </details>
@@ -1490,13 +1505,23 @@ function settingsModal(){
       <div class="muted" style="font-size:.75rem">Bir otomasyon servisine (Make.com, Zapier, n8n) webhook URL'i verirseniz, “Toplu veli gönderimi”nde <b>Otomatik gönder</b> ile sistem mesajı kendisi iletir (SMS/WhatsApp'a bağlayabilirsiniz). Boşsa WhatsApp ile manuel gönderilir.</div>
     </details>
     <details><summary>🎈 Yüzen düğmeler</summary><div id="floatToggles"></div>
-      <button class="btn ghost sm block" id="floatHepsi" style="margin-top:8px">Hepsini göster</button></details>
+      <button class="btn ghost sm block" id="floatHepsi" style="margin-top:8px">Hepsini göster</button>
+      <button class="btn ghost sm block" id="floatKonum" style="margin-top:6px">📍 Konumları sıfırla</button>
+      <div class="muted" style="font-size:.72rem;margin-top:4px">💡 Yüzen düğmeleri (?, 📲, 📺, ✨, 🌙) parmakla istediğiniz yere sürükleyebilirsiniz; her birinin üstündeki × ile gizlersiniz.</div></details>
     <details><summary>💾 Yedekle / geri yükle</summary>
       <button class="btn ghost block sm" id="stYedek">💾 JSON yedek indir</button>
       <button class="btn ghost block sm" id="stGeri" style="margin-top:8px">📂 Yedekten geri yükle</button>
       <input type="file" id="stGeriInput" accept="application/json" class="hidden">
       <button class="btn ghost block sm" id="stDemo" style="margin-top:8px">🎬 Örnek verilerle doldur</button>
       <button class="btn ghost block danger" id="stTemizle" style="margin-top:8px;color:#fff">🗑️ Tüm verileri sil</button>
+    </details>
+    <details><summary>🪪 BKDS Aktarım</summary>
+      <div class="note-box" style="margin-bottom:10px;font-size:.82rem">Kameradan okunan giriş-çıkışlar BRY yazılımında tutulur. BRY → <b>BKDS Aktarım</b>'dan günün listesini Excel/CSV indirip buraya yükleyin; TC/Ad-Soyad ile öğrencilere <b>otomatik düşer</b>.</div>
+      <button class="btn block sm" id="stBkdsAktar">📥 BKDS giriş-çıkış içe al (Excel/CSV)</button>
+      <div class="field" style="margin-top:12px"><label>Canlı uç adresi (JSON) — Make/n8n/yerel</label><input id="stBkdsUrl" value="${esc(st.bkdsUrl||'')}" placeholder="https://hook... / http://192.168.1.110:xxxx/bugun"></div>
+      <div class="pill-toggle"><span>Otomatik çek (arka planda)</span><div class="switch ${st.bkdsOto?'on':''}" id="stBkdsOto"></div></div>
+      <div class="field" style="margin-top:10px"><label>Çekme sıklığı (dk)</label><input type="number" id="stBkdsOtoDk" value="${st.bkdsOtoDk||5}" min="1" max="120"></div>
+      <div class="row"><button class="btn ghost sm" id="stBkdsCek">📡 Şimdi çek</button><button class="btn ghost sm" id="stBkdsRehber">❔ Köprü nasıl kurulur?</button></div>
     </details>
     <details><summary>🔑 Lisans</summary>
       <div id="lisansDurum" class="note-box" style="margin-bottom:10px">Yükleniyor…</div>
@@ -1530,6 +1555,10 @@ function settingsModal(){
       if(S().il) ilceDoldur(S().il, $('#stIlce'), S().ilce);
     }
     const ohs=$('#stOtoHafta'); if(ohs) ohs.onclick=()=>ohs.classList.toggle('on');
+    const ba=$('#stBkdsAktar'); if(ba) ba.onclick=()=>bkdsAktarimModal();
+    const bo=$('#stBkdsOto'); if(bo) bo.onclick=()=>bo.classList.toggle('on');
+    const bc=$('#stBkdsCek'); if(bc) bc.onclick=()=>{ S().bkdsUrl=$('#stBkdsUrl').value.trim(); save(); bkdsCekVeUygula(false); };
+    const br=$('#stBkdsRehber'); if(br) br.onclick=bkdsKopruRehber;
     // lisans
     if($('#lisKKset')){
       $('#lisKKset').textContent=kurulumKodu();
@@ -1548,6 +1577,7 @@ function settingsModal(){
     // float toggles
     cizFloatToggles();
     $('#floatHepsi').onclick=()=>{ window.ZIRVE_kontrolleriGeriGetir(); cizFloatToggles(); };
+    const fk=$('#floatKonum'); if(fk) fk.onclick=()=>{ Object.keys(localStorage).filter(k=>/^zreha_.*_pos$/.test(k)).forEach(k=>localStorage.removeItem(k)); toast('Konumlar sıfırlandı, yenileniyor…','ok'); setTimeout(()=>location.reload(),600); };
     // yedek
     $('#stYedek').onclick=yedekAl;
     $('#stGeri').onclick=()=>$('#stGeriInput').click();
@@ -1560,9 +1590,13 @@ function settingsModal(){
       st.kurumAdi=$('#stKurum').value.trim(); st.personel=$('#stPersonel').value.trim();
       st.baslangic=$('#stBas').value||'09:00'; st.gunlukSlot=+$('#stSlot').value||8;
       st.dersDk=+$('#stDers').value||40; st.molaDk=+$('#stMola').value||10; st.beklemeDk=+$('#stBekle').value||50;
+      const sm=$('#stSeansMin'); if(sm) st.seansMinDk=+sm.value||50;
       st.il=$('#stIl').value||''; st.ilce=$('#stIlce') ? ($('#stIlce').value||'') : st.ilce;
       const oh=$('#stOtoHafta'); if(oh) st.otoHafta=oh.classList.contains('on');
       const wh=$('#stWebhook'); if(wh) st.veliWebhook=wh.value.trim();
+      const bu=$('#stBkdsUrl'); if(bu) st.bkdsUrl=bu.value.trim();
+      const bof=$('#stBkdsOto'); if(bof) st.bkdsOto=bof.classList.contains('on');
+      const bod=$('#stBkdsOtoDk'); if(bod) st.bkdsOtoDk=+bod.value||5;
       st.tatilGunleri=tatil;
       const parse=v=>v.split('\n').map(x=>x.trim()).filter(Boolean);
       const elleServis=parse($('#stServis').value);
@@ -1571,31 +1605,47 @@ function settingsModal(){
       if(st.servisler.length===0) st.servisler=['Servis Yok'];
       st.tanilar=parse($('#stTani').value); st.branslar=parse($('#stBrans').value);
       save(); close(); render(); toast('Ayarlar kaydedildi ✓','ok');
+      if(typeof bkdsOtoBaslat==='function') bkdsOtoBaslat();
       $('#brandSub').textContent = st.kurumAdi || 'Rehabilitasyon Planlama Asistanı';
     };
   });
 }
 function cizFloatToggles(){
   const box=$('#floatToggles'); if(!box) return;
-  box.innerHTML = window.ZIRVE_kontroller.map(k=>`<div class="pill-toggle"><span>${k.ikon} ${esc(k.etiket)}</span><div class="switch ${k.acikMi()?'on':''}" data-fk="${k.id}"></div></div>`).join('') || '<div class="muted">Kontrol yok.</div>';
+  box.innerHTML = window.ZIRVE_kontroller.filter(k=>!k.kalici).map(k=>`<div class="pill-toggle"><span>${k.ikon} ${esc(k.etiket)}</span><div class="switch ${k.acikMi()?'on':''}" data-fk="${k.id}"></div></div>`).join('') || '<div class="muted">Kontrol yok.</div>';
   $$('[data-fk]').forEach(sw=>sw.onclick=()=>{ const k=window.ZIRVE_kontroller.find(x=>x.id===sw.dataset.fk); if(!k)return; if(k.acikMi()) k.gizle(); else k.goster(); sw.classList.toggle('on'); });
 }
 
 /* ============================================================
    YÜZEN KONTROLLER (📺 ekran, ? yardım, 📲 QR)
    ============================================================ */
-function kontrolKur(id,ikon,etiket,html,onOpen){
-  const flag='zreha_'+id+'_gizli';
+function suruklenebilir(el, key, onTap){
+  let sx=0, sy=0, ox=0, oy=0, moved=false, drag=false;
+  const move=(e)=>{ if(!drag) return; const dx=e.clientX-sx, dy=e.clientY-sy; if(Math.abs(dx)>4||Math.abs(dy)>4) moved=true;
+    let nl=Math.max(4,Math.min(innerWidth-el.offsetWidth-4, ox+dx));
+    let nt=Math.max(4,Math.min(innerHeight-el.offsetHeight-4, oy+dy));
+    el.style.left=nl+'px'; el.style.top=nt+'px'; el.style.right='auto'; el.style.bottom='auto'; };
+  const up=()=>{ drag=false; el.style.transition=''; document.removeEventListener('pointermove',move); document.removeEventListener('pointerup',up);
+    if(moved){ const r=el.getBoundingClientRect(); localStorage.setItem(key,JSON.stringify({l:Math.round(r.left),t:Math.round(r.top)})); }
+    else if(onTap) onTap(); };
+  el.addEventListener('pointerdown',(e)=>{ if(e.target.closest('.x')) return; drag=true; moved=false; sx=e.clientX; sy=e.clientY;
+    const r=el.getBoundingClientRect(); ox=r.left; oy=r.top; el.style.transition='none'; el.setPointerCapture&&el.setPointerCapture(e.pointerId);
+    document.addEventListener('pointermove',move); document.addEventListener('pointerup',up); });
+  el.style.touchAction='none';
+}
+function kontrolKur(id,ikon,etiket,html,onOpen,kalici){
+  const flag='zreha_'+id+'_gizli', pkey='zreha_'+id+'_pos';
   const el=document.createElement('div'); el.className='zfloat'; el.id='z'+id;
-  el.innerHTML=`<span class="zface" style="cursor:pointer">${ikon} ${etiket}</span><span class="x" title="Gizle">✕</span>`;
+  el.innerHTML=`<span class="zface">${ikon} ${etiket}</span>${kalici?'':'<span class="x" title="Gizle">✕</span>'}`;
   document.body.appendChild(el);
+  try{ const p=JSON.parse(localStorage.getItem(pkey)||'null'); if(p){ el.style.left=p.l+'px'; el.style.top=p.t+'px'; el.style.right='auto'; el.style.bottom='auto'; } }catch(e){}
   const goster=()=>{ el.style.display='flex'; localStorage.removeItem(flag); };
-  const gizle=()=>{ el.style.display='none'; localStorage.setItem(flag,'1'); };
+  const gizle=()=>{ if(kalici) return; el.style.display='none'; localStorage.setItem(flag,'1'); toast('⚙️ Ayarlar → Yüzen Düğmeler’den geri getirebilirsiniz'); };
   const acikMi=()=>el.style.display!=='none';
-  el.querySelector('.zface').onclick=onOpen;
-  el.querySelector('.x').onclick=(e)=>{ e.stopPropagation(); gizle(); };
-  if(localStorage.getItem(flag)) el.style.display='none';
-  window.ZIRVE_kontroller.push({id,ikon,etiket,goster,gizle,acikMi});
+  suruklenebilir(el, pkey, onOpen);
+  const xb=el.querySelector('.x'); if(xb) xb.onclick=(e)=>{ e.stopPropagation(); gizle(); };
+  if(!kalici && localStorage.getItem(flag)) el.style.display='none';
+  window.ZIRVE_kontroller.push({id,ikon,etiket,goster,gizle,acikMi,kalici:!!kalici});
   return {el,goster,gizle,acikMi};
 }
 window.ZIRVE_kontrolleriGeriGetir=function(){ window.ZIRVE_kontroller.forEach(k=>k.goster()); };
@@ -1664,10 +1714,12 @@ function demoYukle(){
   const st=S(); if(!st.kurumAdi) st.kurumAdi='Örnek Rehabilitasyon Merkezi';
   const adlar=['Ela Yıldız','Kerem Demir','Zeynep Kaya','Mert Aslan','Defne Şahin','Ali Yılmaz','Nisa Aydın','Poyraz Çelik','Elif Doğan','Aras Koç','Berra Öz','Efe Kılıç','Masal Arı','Kuzey Ak','Duru Er','Toprak Soy'];
   const tanilar=st.tanilar, servisler=st.servisler;
-  DB.students = adlar.map((ad,i)=>({ id:uid(), ad, foto:null, oturum: i%2?'oglen':'sabah', servis:servisler[i%(servisler.length-1)], dersTuru: i%3===0?'grup':i%3===1?'ikisi':'bireysel', tani:tanilar[i%tanilar.length], bransIhtiyac:st.branslar[i%st.branslar.length], aylikBireysel: i%3===0?0:8, aylikGrup: i%3===2?0:4, durum: i>13?'askida':'aktif', onamVar: i%5!==0, biyoFotoVar: i%7!==0, veli:'', telefon:'', notlar:'', createdAt:Date.now()-i*1000 }));
+  DB.students = adlar.map((ad,i)=>({ id:uid(), ad, foto:null, tc:String(10000000000+i*137+53).slice(0,11), oturum: i%2?'oglen':'sabah', servis:servisler[i%(servisler.length-1)], dersTuru: i%3===0?'grup':i%3===1?'ikisi':'bireysel', tani:tanilar[i%tanilar.length], bransIhtiyac:st.branslar[i%st.branslar.length], aylikBireysel: i%3===0?0:8, aylikGrup: i%3===2?0:4, durum: i>13?'askida':'aktif', onamVar: i%5!==0, biyoFotoVar: i%7!==0, veli:'', telefon:'', notlar:'', createdAt:Date.now()-i*1000 }));
   DB.uzmanlar = [ {id:uid(),ad:'Ayşe Kaya',brans:'Özel Eğitim Öğretmeni',oturum:'tam',gunler:[1,2,3,4,5]}, {id:uid(),ad:'Burak Şen',brans:'Dil ve Konuşma Terapisti',oturum:'sabah',gunler:[1,3,5]}, {id:uid(),ad:'Ceren Ak',brans:'Ergoterapist',oturum:'oglen',gunler:[2,4]} ];
   const iso=bugunISO();
-  DB.plans[iso] = DB.students.slice(0,6).map((s,i)=>({ id:uid(), studentId:s.id, saat: slotSaatleri(s.oturum)[i%3], tur: s.dersTuru==='grup'?'grup':'bireysel', dk: i%2?80:40, uzmanId:DB.uzmanlar[0].id, durum: i<2?'geldi':i===2?'gelmedi':'planli', alternatifMi:false }));
+  DB.plans[iso] = DB.students.slice(0,6).map((s,i)=>{ const saat=slotSaatleri(s.oturum)[i%3]; const durum=i<2?'geldi':i===2?'gelmedi':'planli';
+    const giris = durum==='geldi'?saat:''; const cikis = i===0?saatEkle(saat,61):i===1?saatEkle(saat,42):'';
+    return { id:uid(), studentId:s.id, saat, tur: s.dersTuru==='grup'?'grup':'bireysel', dk: i%2?80:40, uzmanId:DB.uzmanlar[0].id, durum, giris, cikis, alternatifMi:false }; });
   _demoProgram();
   save(); render(); toast('Örnek veriler yüklendi 🎬','ok');
 }
@@ -1690,6 +1742,7 @@ function baslatUygulama(){
   // brand
   if(S().kurumAdi) $('#brandSub').textContent=S().kurumAdi;
   // floating controls
+  kontrolKur('ayar','⚙️','Ayarlar',null,openSettings,true);   // kalıcı çıpa: taşınır, gizlenemez
   kontrolKur('help','?','Yardım',null,tanitimAc);
   kontrolKur('qr','📲','QR',null,qrAc);
   const ek=kontrolKur('screen','📺','Oto',null,()=>{ ekranModIdx=(ekranModIdx+1)%EKRAN_MODLARI.length; localStorage.setItem('zreha_ekran_mod',ekranModIdx); ekranUygula(); ekranPillGuncelle(ek.el); toast('Ekran modu: '+EKRAN_MODLARI[ekranModIdx][0]); });
@@ -1713,6 +1766,7 @@ function baslatUygulama(){
   aiAsistanKur();
   gozKonforuKur();
   otoHaftaKontrol();
+  if(typeof bkdsOtoBaslat==='function') bkdsOtoBaslat();
   // logo 5x dokunuş → satıcı girişi
   let logoTik=0, logoT; const logo=document.querySelector('.brand .logo');
   if(logo) logo.onclick=()=>{ logoTik++; clearTimeout(logoT); logoT=setTimeout(()=>logoTik=0,1200); if(logoTik>=5){ logoTik=0; saticiGiris(); } };
@@ -2715,6 +2769,7 @@ function topluIceAktar(tur){
       if(isOgr) DB.students.push(...ekle); else DB.uzmanlar.push(...ekle);
       save(); close(); render();
       toast(`${ekle.length} ${isOgr?'öğrenci':'uzman'} eklendi${atlanan?` (${atlanan} mükerrer atlandı)`:''} ✓`,'ok');
+      setTimeout(()=>{ if(confirm('Fotoğrafları da toplu eklemek ister misiniz? (Dosya adı = kişi adı)')) topluFotoModal(tur); }, 400);
     };
   });
 }
@@ -2864,6 +2919,250 @@ function otomatikCizelge(iso){
   if(!yeni.length){ toast('Yerleştirilecek uygun öğrenci/slot bulunamadı','warn'); return; }
   planOf(iso).push(...yeni); save(); render();
   toast(`🧩 ${yeni.length} öğrenci ÇAKIŞMASIZ yerleştirildi${yerlesmeyen?` · ${yerlesmeyen} kapasiteye sığmadı`:''} ✓`,'ok');
+}
+/* ============================================================
+   app11 — BKDS DEVAM TAKİP (giriş/çıkış → süre → seans → ödeme)
+   BKDS: eğitim 60 dk (40 ders+10 dinlenme+10 aile). Yeterli süre
+   kalınmazsa seans SAYILMAZ = ödeme yok. Çıkışı/girişi eksik olan
+   kayıtlar ödeme riskidir.
+   ============================================================ */
+function seansMin(){ return S().seansMinDk||50; }
+function sureDkHesap(giris,cikis){ if(!giris||!cikis) return 0; const d=saatDk(cikis)-saatDk(giris); return d>0?d:0; }
+function seansSayisi(dk){ const m=seansMin(); return dk>=m ? Math.floor(dk/m) : 0; }
+function bkdsDurum(e){
+  if(!e.giris) return {kod:'girisyok', et:'Giriş yok', renk:'#999'};
+  if(!e.cikis) return {kod:'cikisyok', et:'Çıkış eksik ⚠️', renk:'#e0a800'};
+  const dk=sureDkHesap(e.giris,e.cikis), sy=seansSayisi(dk);
+  if(sy<1) return {kod:'yetersiz', et:`Süre yetersiz (${dk}dk) — SAYILMAZ`, renk:'#d64545'};
+  return {kod:'tamam', et:`${dk}dk · ${sy} seans ✓`, renk:'#1f9d6b'};
+}
+// panel riski: geldi işaretli ama çıkış eksik veya süre yetersiz
+function bkdsRisk(iso){
+  return planOf(iso).filter(e=>{ if(e.durum!=='geldi' && !e.giris) return false; const d=bkdsDurum(e); return d.kod==='cikisyok'||d.kod==='yetersiz'||(e.durum==='geldi'&&!e.giris); }).length;
+}
+
+function bkdsModal(){
+  const iso=GDATE; const plan=planOf(iso).slice().sort((a,b)=>(a.saat||'').localeCompare(b.saat||''));
+  if(plan.length===0){ toast('Bu güne plan yok','warn'); return; }
+  const satir=(e)=>{ const s=ogrById(e.studentId)||{}; const d=bkdsDurum(e); const dk=sureDkHesap(e.giris,e.cikis);
+    return `<div class="slot" style="border-left:5px solid ${d.renk};flex-wrap:wrap">
+      <div class="avatar">${s.foto?`<img src="${s.foto}">`:bas(s.ad)}</div>
+      <div class="info" style="min-width:150px">
+        <div class="nm">${esc(s.ad||'')}</div>
+        <div class="meta"><span class="chip ${e.tur==='grup'?'grup':''}">${e.tur==='grup'?'Grup':'Bireysel'}</span><span class="chip" style="background:${d.renk}22;color:${d.renk}">${d.et}</span></div>
+      </div>
+      <div class="row" style="gap:5px;flex-wrap:wrap">
+        <label style="font-size:.7rem;color:var(--muted)">Giriş<br><input type="time" data-bg="${e.id}" value="${e.giris||''}" style="width:96px;padding:6px;border:1.5px solid var(--line);border-radius:8px"></label>
+        <label style="font-size:.7rem;color:var(--muted)">Çıkış<br><input type="time" data-bc="${e.id}" value="${e.cikis||''}" style="width:96px;padding:6px;border:1.5px solid var(--line);border-radius:8px"></label>
+        <div style="display:flex;flex-direction:column;gap:3px"><button class="btn ghost sm" data-bgnow="${e.id}" style="padding:5px 8px">Giriş⏱</button><button class="btn ghost sm" data-bcnow="${e.id}" style="padding:5px 8px">Çıkış⏱</button></div>
+      </div>
+    </div>`; };
+  // özet
+  const hesapla=()=>{ let seansB=0,seansG=0,risk=0; planOf(iso).forEach(e=>{ const dk=sureDkHesap(e.giris,e.cikis); const sy=seansSayisi(dk); if(sy>0){ if(e.tur==='grup')seansG+=sy; else seansB+=sy; } const d=bkdsDurum(e); if(d.kod==='cikisyok'||d.kod==='yetersiz')risk++; }); return {seansB,seansG,risk}; };
+  const ozetHTML=()=>{ const o=hesapla(); return `<div class="stats" style="margin-bottom:10px">
+    <div class="stat g"><div class="n">${o.seansB}</div><div class="l">Geçerli bireysel seans</div></div>
+    <div class="stat b"><div class="n">${o.seansG}</div><div class="l">Geçerli grup seans</div></div>
+    <div class="stat d"><div class="n">${o.risk}</div><div class="l">Ödeme riskli kayıt</div></div></div>`; };
+  const body=`
+    <div class="note-box" style="margin-bottom:10px;font-size:.82rem">🪪 BKDS: her öğrencinin <b>giriş</b> ve <b>çıkış</b> yüz okumasını girin. Tek seans için en az <b>${seansMin()} dk</b> kalınmalı; yetersizse <b style="color:#d64545">seans sayılmaz, ödeme alınamaz</b>. Çıkışı eksik olan kayıtlar risklidir.</div>
+    <div id="bkdsOzet">${ozetHTML()}</div>
+    <div id="bkdsListe" class="slist">${plan.map(satir).join('')}</div>
+    <div class="ai-toolbar"><button class="btn amber sm" id="bkdsAktar">📥 BKDS'den içe al</button><button class="btn sm" id="bkdsPng">📷 Görsel</button><button class="btn sm" id="bkdsPdf">📄 PDF</button><button class="btn ghost sm" id="bkdsGiris">⏱ Gelenlere giriş bas</button></div>`;
+  modal('BKDS Devam Takip — '+insanTarih(iso).split(',')[0], body, (close)=>{
+    const g=(eid)=>planOf(iso).find(x=>x.id===eid);
+    const yenile=()=>{ save(); $('#bkdsOzet').innerHTML=ozetHTML(); $('#bkdsListe').innerHTML=plan.map(satir).join(''); bind(); };
+    function bind(){
+      $$('[data-bg]').forEach(i=>i.onchange=()=>{ const e=g(i.dataset.bg); e.giris=i.value; if(e.giris&&e.durum==='planli')e.durum='geldi'; yenile(); });
+      $$('[data-bc]').forEach(i=>i.onchange=()=>{ const e=g(i.dataset.bc); e.cikis=i.value; yenile(); });
+      $$('[data-bgnow]').forEach(b=>b.onclick=()=>{ const e=g(b.dataset.bgnow); e.giris=simdiSaat(); if(e.durum==='planli')e.durum='geldi'; yenile(); });
+      $$('[data-bcnow]').forEach(b=>b.onclick=()=>{ const e=g(b.dataset.bcnow); e.cikis=simdiSaat(); yenile(); });
+    }
+    bind();
+    $('#bkdsGiris').onclick=()=>{ planOf(iso).forEach(e=>{ if(e.durum==='geldi'&&!e.giris) e.giris=e.saat||simdiSaat(); }); yenile(); toast('Yüzü okunanlara giriş saati yazıldı','ok'); };
+    $('#bkdsAktar').onclick=()=>{ close(); bkdsAktarimModal(); };
+    $('#bkdsPng').onclick=()=>window.ZIRVE_gorselPaylas({html:bkdsSheet(iso),baslik:`BKDS-${iso}`});
+    $('#bkdsPdf').onclick=()=>window.ZIRVE_pdfPaylas({html:bkdsSheet(iso),baslik:`BKDS-${iso}`});
+  });
+}
+function simdiSaat(){ const d=new Date(); return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`; }
+function bkdsSheet(iso){
+  const plan=planOf(iso).slice().sort((a,b)=>(a.saat||'').localeCompare(b.saat||''));
+  const rows=plan.map((e,i)=>{ const s=ogrById(e.studentId)||{}; const dk=sureDkHesap(e.giris,e.cikis); const sy=seansSayisi(dk); const d=bkdsDurum(e);
+    return `<tr><td>${i+1}</td><td style="text-align:left">${esc(s.ad||'')}</td><td>${e.giris||'-'}</td><td>${e.cikis||'-'}</td><td>${dk||'-'}</td><td>${sy}</td><td style="color:${d.renk}">${esc(d.et)}</td></tr>`; }).join('');
+  return `<div style="font-family:system-ui"><h3 style="color:#0e4f52;text-align:center">${esc(S().kurumAdi||'')} — BKDS Devam · ${insanTarih(iso)}</h3>
+    <table style="width:100%;border-collapse:collapse;font-size:.85rem"><tr><th>#</th><th>Öğrenci</th><th>Giriş</th><th>Çıkış</th><th>Süre(dk)</th><th>Seans</th><th>Durum</th></tr>${rows}</table></div>`;
+}
+/* ============================================================
+   app12 — BKDS / BRY AKTARIM: kameradan okunan giriş-çıkışı içe al
+   BRY (yerel sunucu) "BKDS Aktarım" ile Excel/CSV verir → buraya
+   yükle → TC/Ad-Soyad ile eşleştir → giriş/çıkış OTOMATİK düşer.
+   ============================================================ */
+
+// "22.08.2026 12:06:13" / "12:06" → "12:06"
+function saatCikar(v){ const m=String(v||'').match(/(\d{1,2}):(\d{2})/); return m? `${m[1].padStart(2,'0')}:${m[2]}` : ''; }
+function tcSade(v){ return String(v||'').replace(/\D/g,''); }
+// öğrenciyi TC (tam/son4) ya da normalize ad ile bul
+function ogrEslesBul(tc, ad){
+  const t=tcSade(tc), an=trLower(ad).replace(/\*/g,'').replace(/\s+/g,' ').trim();
+  if(t.length>=11){ const m=DB.students.find(s=>tcSade(s.tc)===t); if(m) return m; }
+  if(t.length>=4){ const son4=t.slice(-4); const m=DB.students.filter(s=>tcSade(s.tc).slice(-4)===son4); if(m.length===1) return m[0]; }
+  if(an && !an.includes('*')){ const m=DB.students.find(s=>trLower(s.ad).replace(/\s+/g,' ').trim()===an); if(m) return m; }
+  return null;
+}
+// BRY satırlarını {tc,ad,giris,cikis} listesine çevir
+function bryAyristir(rows){
+  if(!rows.length) return [];
+  const H={ giris:['ilkgiris','ilkgiriş','giris','giriş','giriştarihi'], cikis:['sonçikis','sonçıkış','soncikis','cikis','çıkış','çikis'], tc:['tckimlik','tc','kimlik','tckimlikno'], ad:['adsoyad','ad','isim','adsoyadı'] };
+  const sb=s=>trLower(s).replace(/[\s_.:/-]/g,'');
+  let idx={}, veri=rows;
+  const h0=rows[0].map(sb);
+  const eslesenler=Object.keys(H).filter(k=>H[k].some(a=>h0.some(hc=>hc===a||hc.includes(a))));
+  if(eslesenler.length>=2){ rows[0].forEach((h,i)=>{ const hc=sb(h); for(const k in H){ if(idx[k]===undefined && H[k].some(a=>hc===a||hc.includes(a))) idx[k]=i; } }); veri=rows.slice(1); }
+  else { idx={giris:0,cikis:1,tc:2,ad:3}; }
+  const al=(r,k)=> idx[k]!==undefined ? (r[idx[k]]||'') : '';
+  return veri.map(r=>({ giris:saatCikar(al(r,'giris')), cikis:saatCikar(al(r,'cikis')), tc:tcSade(al(r,'tc')), ad:String(al(r,'ad')||'').trim() }))
+             .filter(x=>x.tc||x.ad);
+}
+// eşleşenleri bugünün planına uygula
+function bryUygula(kayitlar){
+  const iso=GDATE; let eslesen=0, guncel=0, olusan=0; const eslesmeyen=[];
+  kayitlar.forEach(k=>{
+    const s=ogrEslesBul(k.tc,k.ad);
+    if(!s){ eslesmeyen.push(k.ad||('***'+k.tc.slice(-4))); return; }
+    eslesen++;
+    let e=planOf(iso).find(x=>x.studentId===s.id);
+    if(!e){ e={id:uid(),studentId:s.id,saat:k.giris||'',tur:s.dersTuru==='grup'?'grup':'bireysel',dk:40,uzmanId:null,durum:'planli',alternatifMi:false}; planOf(iso).push(e); olusan++; }
+    if(k.giris){ e.giris=k.giris; if(e.durum==='planli')e.durum='geldi'; }
+    if(k.cikis){ e.cikis=k.cikis; }
+    guncel++;
+  });
+  save(); render();
+  return {eslesen,guncel,olusan,eslesmeyen};
+}
+function bryRaporGoster(sonuc){
+  toast(`✅ ${sonuc.guncel} kayıt işlendi · ${sonuc.olusan} yeni · ${sonuc.eslesmeyen.length} eşleşmedi`,'ok');
+  if(sonuc.eslesmeyen.length){
+    modal('Eşleşmeyen kayıtlar', `<div class="note-box" style="margin-bottom:10px">Aşağıdakiler öğrenci havuzunda bulunamadı. Öğrenciyi ekleyip TC girerseniz sonraki aktarımda otomatik eşleşir.</div><div class="slist">${sonuc.eslesmeyen.map(a=>`<div class="scard" style="box-shadow:none;padding:8px"><div class="info"><div class="nm" style="font-size:.9rem">${esc(a)}</div></div></div>`).join('')}</div>`);
+  }
+}
+
+function bkdsAktarimModal(){
+  let sekme='dosya', kayitlar=[];
+  const onizle=()=>{ const b=$('#baOnizle'); if(!b) return;
+    if(!kayitlar.length){ b.innerHTML='<div class="muted" style="font-size:.85rem">Henüz veri yok.</div>'; $('#baUygula').disabled=true; return; }
+    $('#baUygula').disabled=false; $('#baUygula').textContent=`✅ ${kayitlar.length} kaydı bugüne uygula`;
+    b.innerHTML=`<div class="muted" style="font-size:.82rem;margin-bottom:6px"><b>${kayitlar.length}</b> giriş-çıkış kaydı. İlk 5:</div>`+
+      kayitlar.slice(0,5).map(k=>`<div class="uw" style="padding:7px 4px"><span>${esc(k.ad||'***'+k.tc.slice(-4))}</span><span class="chip">${k.giris||'—'} → ${k.cikis||'—'}</span></div>`).join('');
+  };
+  const ayristir=t=>{ kayitlar=bryAyristir(csvParse(t)); onizle(); };
+  const body=`
+    <div class="note-box" style="margin-bottom:10px;font-size:.82rem">📥 <b>Kamera → BRY → buraya.</b> BRY (BKDS) yazılımında <b>“BKDS Aktarım”</b> ekranından günün giriş-çıkış listesini Excel/CSV olarak indirin ve buraya yükleyin; TC veya Ad-Soyad ile eşleşen öğrencilere <b>giriş/çıkış otomatik düşer</b>.</div>
+    <div class="filters" style="margin-bottom:10px">
+      <button class="fbtn on" data-ba="dosya">📄 Excel/CSV</button>
+      <button class="fbtn" data-ba="yapistir">📋 Yapıştır</button>
+      <button class="fbtn" data-ba="canli">📡 Canlı uç</button>
+    </div>
+    <div id="baPane"></div>
+    <div class="hr"></div>
+    <div id="baOnizle"></div>
+    <button class="btn block" id="baUygula" style="margin-top:10px" disabled>Uygula</button>`;
+  modal('BKDS Aktarım (giriş-çıkış içe al)', body, (close)=>{
+    function pane(){
+      const p=$('#baPane');
+      if(sekme==='dosya'){
+        p.innerHTML=`<input type="file" id="baFile" accept=".xlsx,.xls,.csv" style="width:100%;padding:12px;border:1.5px dashed var(--line);border-radius:11px;background:var(--card-2)"><div id="baMsg" class="muted" style="font-size:.82rem;margin-top:8px"></div>`;
+        $('#baFile').onchange=async e=>{ const f=e.target.files[0]; if(!f)return; const msg=$('#baMsg'); msg.textContent='Okunuyor…';
+          try{ if(/\.csv$/i.test(f.name)){ ayristir(await f.text()); } else { await cdnYukle('https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js'); const wb=XLSX.read(await f.arrayBuffer(),{type:'array'}); const ws=wb.Sheets[wb.SheetNames[0]]; const rows=XLSX.utils.sheet_to_json(ws,{header:1,blankrows:false}).map(r=>r.map(c=>c==null?'':String(c))); kayitlar=bryAyristir(rows); onizle(); } msg.textContent=f.name+' okundu.'; }
+          catch(err){ msg.textContent='Okunamadı: '+(err.message||''); } };
+      } else if(sekme==='yapistir'){
+        p.innerHTML=`<div class="muted" style="font-size:.8rem;margin-bottom:6px">BRY listesini kopyalayıp yapıştırın (İlk Giriş · Son Çıkış · TC · Ad Soyad).</div><textarea id="baText" style="width:100%;min-height:130px;font-family:monospace;font-size:.82rem" placeholder="22.08.2026 09:00:12  22.08.2026 10:05:30  12345678901  Ahmet Yılmaz"></textarea>`;
+        $('#baText').oninput=()=>ayristir($('#baText').value);
+      } else {
+        p.innerHTML=`<div class="note-box" style="font-size:.8rem;margin-bottom:8px">⚠️ Deneysel. BRY/aracı sunucu JSON veren bir uç sağlıyorsa (ör. Make/n8n köprüsü ya da yerel API) adresini girin; uygulama çekip eşleştirir. CORS/erişim uca bağlıdır.</div>
+          <input id="baUrl" value="${esc(S().bkdsUrl||'')}" placeholder="https://... / http://192.168.1.110:xxxx/..." style="width:100%;padding:11px;border:1.5px solid var(--line);border-radius:10px">
+          <button class="btn block sm" id="baCek" style="margin-top:8px">📡 Şimdi çek</button><div id="baCmsg" class="muted" style="font-size:.82rem;margin-top:6px"></div>`;
+        $('#baCek').onclick=async ()=>{ const url=$('#baUrl').value.trim(); if(!url){toast('Adres girin','warn');return;} S().bkdsUrl=url; save(); $('#baCmsg').innerHTML='<span class="spinner"></span> çekiliyor…';
+          try{ const r=await fetch(url); const j=await r.json(); const arr=Array.isArray(j)?j:(j.data||[]);
+            kayitlar=arr.map(o=>({giris:saatCikar(o.giris||o.ilkGiris||o.giris_saati||o.entry),cikis:saatCikar(o.cikis||o.sonCikis||o.cikis_saati||o.exit),tc:tcSade(o.tc||o.tcKimlik||o.kimlik),ad:String(o.ad||o.adSoyad||o.isim||'').trim()})).filter(x=>x.tc||x.ad);
+            onizle(); $('#baCmsg').textContent=kayitlar.length+' kayıt alındı.'; }
+          catch(e){ $('#baCmsg').textContent='Çekilemedi: '+(e.message||'')+' (CORS/erişim olabilir)'; } };
+      }
+    }
+    $$('[data-ba]').forEach(b=>b.onclick=()=>{ sekme=b.dataset.ba; $$('[data-ba]').forEach(x=>x.classList.toggle('on',x===b)); pane(); });
+    pane(); onizle();
+    $('#baUygula').onclick=()=>{ const sonuc=bryUygula(kayitlar); close(); bryRaporGoster(sonuc); };
+  });
+}
+/* ============================================================
+   app13 — TOPLU FOTOĞRAF + BKDS CANLI OTOMATİK + KÖPRÜ REHBERİ
+   ============================================================ */
+
+/* ---------- Toplu fotoğraf: dosya adı = öğrenci/uzman adı ---------- */
+const adNorm = s => trLower(s||'').replace(/\s+/g,' ').trim();
+const dosyaAdNorm = s => trLower(s||'').replace(/\.[a-z0-9]+$/i,'').replace(/[_\-]+/g,' ').replace(/\d+/g,'').replace(/\s+/g,' ').trim();
+function topluFotoModal(tur){
+  const isOgr = tur!=='uzm';
+  const hedef = isOgr?DB.students:DB.uzmanlar;
+  let esles=[], eslesmez=[];
+  const body=`
+    <div class="note-box" style="margin-bottom:10px;font-size:.83rem">📷 Birden çok fotoğraf seçin. <b>Dosya adı</b> kişinin adıyla aynı olsun (ör. <i>Ahmet Yılmaz.jpg</i>). Ada göre otomatik eşleşir, küçültülüp kaydedilir. Cihazda kalır (KVKK).</div>
+    <input type="file" id="tfFiles" accept="image/*" multiple style="width:100%;padding:12px;border:1.5px dashed var(--line);border-radius:11px;background:var(--card-2)">
+    <div id="tfList" style="margin-top:10px"></div>
+    <button class="btn block" id="tfUygula" style="margin-top:10px" disabled>Uygula</button>`;
+  modal(isOgr?'📷 Toplu Öğrenci Fotoğrafı':'📷 Toplu Uzman Fotoğrafı', body, (close)=>{
+    $('#tfFiles').onchange=(e)=>{
+      esles=[]; eslesmez=[];
+      [...e.target.files].forEach(f=>{ const n=dosyaAdNorm(f.name); const kisi=hedef.find(x=>adNorm(x.ad)===n) || hedef.find(x=>adNorm(x.ad).startsWith(n)&&n.length>4);
+        if(kisi) esles.push({file:f,kisi}); else eslesmez.push(f.name); });
+      $('#tfList').innerHTML = `<div class="muted" style="font-size:.85rem;margin-bottom:6px">Eşleşen <b>${esles.length}</b> · eşleşmeyen <b>${eslesmez.length}</b></div>`+
+        esles.slice(0,10).map(m=>`<div class="uw" style="padding:7px 4px"><span>${esc(m.kisi.ad)}</span><span class="chip aktif">✓ eşleşti</span></div>`).join('')+
+        (eslesmez.length?`<div class="muted" style="font-size:.78rem;margin-top:6px">Eşleşmeyen dosyalar: ${eslesmez.slice(0,8).map(esc).join(', ')}${eslesmez.length>8?'…':''}</div>`:'');
+      $('#tfUygula').disabled=esles.length===0; $('#tfUygula').textContent=`✅ ${esles.length} fotoğrafı uygula`;
+    };
+    $('#tfUygula').onclick=()=>{
+      $('#tfUygula').disabled=true; $('#tfUygula').innerHTML='<span class="spinner"></span> işleniyor…';
+      let i=0; const next=()=>{ if(i>=esles.length){ save(); render(); close(); toast(`${esles.length} fotoğraf eklendi ✓`,'ok'); return; }
+        const m=esles[i++]; resimKucult(m.file, d=>{ m.kisi.foto=d; next(); }); };
+      next();
+    };
+  });
+}
+
+/* ---------- BKDS canlı otomatik çekme (Make/n8n/JSON uç) ---------- */
+function bkdsCekVeUygula(sessiz){
+  const url=(S().bkdsUrl||'').trim(); if(!url) return Promise.resolve(null);
+  return fetch(url).then(r=>r.json()).then(j=>{
+    const arr=Array.isArray(j)?j:(j.data||j.records||[]);
+    const kayitlar=arr.map(o=>({ giris:saatCikar(o.giris||o.ilkGiris||o.giris_saati||o.entry||o.checkIn), cikis:saatCikar(o.cikis||o.sonCikis||o.cikis_saati||o.exit||o.checkOut), tc:tcSade(o.tc||o.tcKimlik||o.kimlik||o.tcno), ad:String(o.ad||o.adSoyad||o.isim||o.name||'').trim() })).filter(x=>x.tc||x.ad);
+    if(!kayitlar.length){ if(!sessiz) toast('Uçtan kayıt gelmedi','warn'); return null; }
+    const s=bryUygula(kayitlar);
+    toast(`📡 BKDS: ${s.guncel} kayıt güncellendi${s.eslesmeyen.length?` · ${s.eslesmeyen.length} eşleşmedi`:''}`, 'ok');
+    return s;
+  }).catch(e=>{ if(!sessiz) toast('Çekilemedi: '+(e.message||'')+' (CORS/erişim)','err'); return null; });
+}
+function bkdsOtoBaslat(){
+  if(window._bkdsTimer){ clearInterval(window._bkdsTimer); window._bkdsTimer=null; }
+  if(S().bkdsOto && S().bkdsUrl){
+    const dk=Math.max(1, S().bkdsOtoDk||5);
+    window._bkdsTimer=setInterval(()=>bkdsCekVeUygula(true), dk*60000);
+    setTimeout(()=>bkdsCekVeUygula(true), 3000); // açılışta bir kez
+  }
+}
+function bkdsKopruRehber(){
+  modal('📡 BKDS otomatik köprü — nasıl kurulur?', `<div class="ai-answer" style="font-size:.9rem">
+    <p>Amaç: kameradan okunan giriş-çıkış, elle yükleme olmadan REHA'ya <b>otomatik</b> düşsün.</p>
+    <h3>Yol 1 — Make.com / n8n köprüsü (önerilen)</h3>
+    <ul>
+      <li>BRY yazılımından günün listesini otomatik dışa aktaracak bir <b>zamanlanmış senaryo</b> kurun (Make/n8n).</li>
+      <li>Senaryo bu listeyi JSON olarak yayınlayan bir <b>web adresi</b> (webhook/HTTP) üretsin. Alanlar: <code>ad</code>, <code>tc</code>, <code>giris</code>, <code>cikis</code>.</li>
+      <li>Bu adresi Ayarlar → BKDS Aktarım → <b>Canlı uç</b> alanına yazın, <b>"otomatik çek"</b> açın.</li>
+    </ul>
+    <h3>Yol 2 — Yerel API</h3>
+    <ul><li>BRY/aracı yazılımınız yerel bir JSON uç veriyorsa (ör. <code>http://192.168.1.110:xxxx/bugun</code>) doğrudan onu yazın. Not: tarayıcı güvenliği (CORS) engelleyebilir; küçük bir aracı köprü çözer.</li></ul>
+    <h3>Yol 3 — Excel (her zaman çalışır)</h3>
+    <ul><li>BRY → "BKDS Aktarım" → Excel indir → REHA → "📥 BKDS'den içe al". Otomatik olmasa da garanti yöntemdir.</li></ul>
+    <p class="muted">İstersen bu köprüyü birlikte kuralım; alan adlarını sana göre ayarlarım.</p>
+  </div>`);
 }
 
 </script>
